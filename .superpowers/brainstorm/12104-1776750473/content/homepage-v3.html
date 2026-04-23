@@ -1,0 +1,241 @@
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #f2f2f7; color: #000; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; }
+.app { max-width: 420px; margin: 0 auto; background: #f2f2f7; min-height: 100vh; }
+
+.status-bar { display: flex; justify-content: space-between; padding: 12px 20px 4px; font-size: 12px; color: #8e8e93; font-weight: 500; }
+
+.top-nav { display: flex; align-items: center; justify-content: space-between; padding: 6px 20px 10px; }
+.app-title { font-size: 28px; font-weight: 800; letter-spacing: -0.8px; }
+.nav-icons { display: flex; gap: 10px; }
+.nav-icon { width: 34px; height: 34px; background: #e5e5ea; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+
+.tabs { display: flex; gap: 7px; padding: 0 20px 14px; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 5px 13px; border-radius: 20px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.tab.active { background: #000; color: #fff; }
+.tab.inactive { background: #e5e5ea; color: #3c3c43; }
+
+.section-title {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+  padding: 0 20px 7px; display: flex; align-items: center; gap: 5px;
+}
+.live-dot { width: 6px; height: 6px; background: #ff3b30; border-radius: 50%; animation: blink 1.4s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.group { background: #fff; border-radius: 14px; margin: 0 12px 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+.item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 14px; border-bottom: 1px solid #f2f2f7;
+  position: relative;
+}
+.item:last-child { border-bottom: none; }
+
+/* left accent bar via box-shadow trick */
+.item.is-live   { border-left: 3px solid #ff3b30; }
+.item.is-soon   { border-left: 3px solid #ff9500; }
+.item.is-later  { border-left: 3px solid #c7c7cc; }
+
+.emoji { font-size: 20px; width: 30px; text-align: center; flex-shrink: 0; }
+
+.info { flex: 1; min-width: 0; }
+.title { font-size: 13px; font-weight: 600; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sub   { font-size: 11px; color: #8e8e93; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.right { flex-shrink: 0; text-align: right; }
+.badge { font-size: 10px; font-weight: 800; display: block; }
+.badge.live   { color: #ff3b30; }
+.badge.soon   { color: #ff9500; }
+.badge.later  { color: #8e8e93; }
+.time  { font-size: 10px; color: #c7c7cc; display: block; margin-top: 2px; }
+
+/* score pill */
+.score {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #f2f2f7; border-radius: 6px; padding: 2px 7px; margin-top: 4px;
+  font-size: 11px; font-weight: 700; color: #000;
+}
+.score-dim { font-weight: 400; color: #8e8e93; font-size: 10px; }
+
+.tab-bar {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 420px; background: rgba(242,242,247,0.93); backdrop-filter: blur(16px);
+  border-top: 1px solid #d1d1d6;
+  display: flex; justify-content: space-around; padding: 10px 0 28px;
+}
+.tb { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.tb-icon  { font-size: 22px; }
+.tb-label { font-size: 10px; color: #8e8e93; font-weight: 500; }
+.tb.active .tb-label { color: #000; font-weight: 700; }
+
+.spacer { height: 90px; }
+</style>
+
+<div class="app">
+  <div class="status-bar"><span>9:41</span><span>5G ████</span></div>
+
+  <div class="top-nav">
+    <div class="app-title">Happening</div>
+    <div class="nav-icons">
+      <div class="nav-icon">🔍</div>
+      <div class="nav-icon">🔔</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active">全部</div>
+    <div class="tab inactive">⚽ 体育</div>
+    <div class="tab inactive">🎵 娱乐</div>
+    <div class="tab inactive">🛍️ 购物</div>
+    <div class="tab inactive">📱 科技</div>
+    <div class="tab inactive">🎮 直播</div>
+  </div>
+
+  <!-- 正在发生 -->
+  <div class="section-title"><div class="live-dot"></div> 正在发生</div>
+  <div class="group">
+    <div class="item is-live">
+      <div class="emoji">⚽</div>
+      <div class="info">
+        <div class="title">皇马 vs 巴萨 · 西甲</div>
+        <div class="score">皇马 <span style="color:#ff3b30">1</span> <span class="score-dim">—</span> <span style="color:#007aff">2</span> 巴萨 <span class="score-dim" style="margin-left:4px">22'</span></div>
+      </div>
+      <div class="right"><span class="badge live">● 直播</span><span class="time">CCTV5</span></div>
+    </div>
+    <div class="item is-live">
+      <div class="emoji">🏀</div>
+      <div class="info">
+        <div class="title">湖人 vs 凯尔特人 · NBA季后赛</div>
+        <div class="score">LAL <span>78</span> <span class="score-dim">—</span> <span>81</span> BOS <span class="score-dim" style="margin-left:4px">Q3 4:22</span></div>
+      </div>
+      <div class="right"><span class="badge live">● 直播</span><span class="time">腾讯体育</span></div>
+    </div>
+    <div class="item is-live">
+      <div class="emoji">🎾</div>
+      <div class="info">
+        <div class="title">德约科维奇 vs 阿尔卡拉斯 · 法网</div>
+        <div class="score">NVK <span>6 4*</span> <span class="score-dim">—</span> <span>4 6</span> ALC <span class="score-dim" style="margin-left:4px">第3盘</span></div>
+      </div>
+      <div class="right"><span class="badge live">● 直播</span><span class="time">优酷</span></div>
+    </div>
+    <div class="item is-live">
+      <div class="emoji">🏎️</div>
+      <div class="info">
+        <div class="title">F1 摩纳哥站 · 正赛</div>
+        <div class="sub">🥇 维斯塔潘  🥈 勒克莱尔  🥉 诺里斯</div>
+      </div>
+      <div class="right"><span class="badge live">● 38/78圈</span><span class="time">CCTV5</span></div>
+    </div>
+    <div class="item is-live">
+      <div class="emoji">🎵</div>
+      <div class="info">
+        <div class="title">科切拉音乐节 Day 2</div>
+        <div class="sub">Lady Gaga 正在演出 · 138万在线</div>
+      </div>
+      <div class="right"><span class="badge live">● 直播</span><span class="time">B站</span></div>
+    </div>
+    <div class="item is-live">
+      <div class="emoji">🎮</div>
+      <div class="info">
+        <div class="title">主播小李 · 王者荣耀</div>
+        <div class="sub">138万在线 · 连胜中</div>
+      </div>
+      <div class="right"><span class="badge live">● 直播</span><span class="time">Bilibili</span></div>
+    </div>
+    <div class="item is-live">
+      <div class="emoji">🛍️</div>
+      <div class="info">
+        <div class="title">iPhone 16 Pro 限时秒杀</div>
+        <div class="sub">京东 · 立减 ¥1200 · 剩 00:34:12</div>
+      </div>
+      <div class="right"><span class="badge live">● 进行中</span><span class="time">今天</span></div>
+    </div>
+  </div>
+
+  <!-- 即将发生 -->
+  <div class="section-title" style="color:#ff9500">⏰ 即将发生</div>
+  <div class="group">
+    <div class="item is-soon">
+      <div class="emoji">🎟️</div>
+      <div class="info">
+        <div class="title">周杰伦 北京演唱会 开票</div>
+        <div class="sub">大麦网 · 内场 ¥980 起</div>
+      </div>
+      <div class="right"><span class="badge soon">45分钟后</span><span class="time">限量发售</span></div>
+    </div>
+    <div class="item is-soon">
+      <div class="emoji">🍎</div>
+      <div class="info">
+        <div class="title">Apple WWDC 2025 发布会</div>
+        <div class="sub">iOS 19 · macOS · Apple Intelligence</div>
+      </div>
+      <div class="right"><span class="badge soon">2小时后</span><span class="time">今晚 22:00</span></div>
+    </div>
+    <div class="item is-soon">
+      <div class="emoji">🏀</div>
+      <div class="info">
+        <div class="title">NBA 总决赛 G5 · 湖人 vs 凯尔特人</div>
+        <div class="sub">系列赛 2-2 · 胜者晋级</div>
+      </div>
+      <div class="right"><span class="badge soon">3小时后</span><span class="time">今晚 00:00</span></div>
+    </div>
+    <div class="item is-later">
+      <div class="emoji">🎵</div>
+      <div class="info">
+        <div class="title">Taylor Swift《Reputation 2》发布</div>
+        <div class="sub">Spotify · Apple Music · 网易云</div>
+      </div>
+      <div class="right"><span class="badge later">明天</span><span class="time">00:00 上线</span></div>
+    </div>
+    <div class="item is-later">
+      <div class="emoji">🏎️</div>
+      <div class="info">
+        <div class="title">F1 加拿大站 · 排位赛</div>
+        <div class="sub">CCTV5 直播转播</div>
+      </div>
+      <div class="right"><span class="badge later">明天</span><span class="time">09:00</span></div>
+    </div>
+    <div class="item is-later">
+      <div class="emoji">📺</div>
+      <div class="info">
+        <div class="title">《黑镜 S7》全集上线</div>
+        <div class="sub">Netflix · 共6集</div>
+      </div>
+      <div class="right"><span class="badge later">后天</span><span class="time">周五</span></div>
+    </div>
+    <div class="item is-later">
+      <div class="emoji">🚀</div>
+      <div class="info">
+        <div class="title">SpaceX 星舰第9次发射</div>
+        <div class="sub">直播 · 发射窗口 2小时</div>
+      </div>
+      <div class="right"><span class="badge later">本周六</span><span class="time">23:30</span></div>
+    </div>
+    <div class="item is-later">
+      <div class="emoji">🎮</div>
+      <div class="info">
+        <div class="title">《黑神话：悟空》DLC 上线</div>
+        <div class="sub">Steam · Xbox · PS5</div>
+      </div>
+      <div class="right"><span class="badge later">下周一</span><span class="time">待确认</span></div>
+    </div>
+    <div class="item is-later">
+      <div class="emoji">👟</div>
+      <div class="info">
+        <div class="title">Nike Air Max 联名款发售</div>
+        <div class="sub">得物 · SNKRS · 限量500双</div>
+      </div>
+      <div class="right"><span class="badge later">下周三</span><span class="time">10:00</span></div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <div class="tab-bar">
+    <div class="tb active"><div class="tb-icon">⚡</div><div class="tb-label" style="color:#000;font-weight:700">正在发生</div></div>
+    <div class="tb"><div class="tb-icon">🗓️</div><div class="tb-label">日历</div></div>
+    <div class="tb"><div class="tb-icon">🔍</div><div class="tb-label">发现</div></div>
+    <div class="tb"><div class="tb-icon">⭐</div><div class="tb-label">我的</div></div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+{"type":"server-started","port":61519,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:61519","screen_dir":"/Users/zuiyou/github/Happening/.superpowers/brainstorm/12104-1776750473/content","state_dir":"/Users/zuiyou/github/Happening/.superpowers/brainstorm/12104-1776750473/state"}
+{"type":"screen-added","file":"/Users/zuiyou/github/Happening/.superpowers/brainstorm/12104-1776750473/content/homepage.html"}
+{"type":"screen-added","file":"/Users/zuiyou/github/Happening/.superpowers/brainstorm/12104-1776750473/content/homepage-v2.html"}
+{"type":"screen-added","file":"/Users/zuiyou/github/Happening/.superpowers/brainstorm/12104-1776750473/content/homepage-v3.html"}
+{"type":"screen-added","file":"/Users/zuiyou/github/Happening/.superpowers/brainstorm/12104-1776750473/content/f1-detail.html"}
+{"type":"screen-added","file":"/Users/zuiyou/github/Happening/.superpowers/brainstorm/12104-1776750473/content/back-to-home.html"}
+{"type":"server-stopped","reason":"idle timeout"}

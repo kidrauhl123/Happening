@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happening</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+
+    :root {
+      --bg:     #E4E2DA;
+      --phone:  #F8F7F4;
+      --card:   #FFFFFF;
+      --t1:     #111111;
+      --t2:     #909090;
+      --t3:     #C8C8C8;
+      --div:    rgba(0,0,0,0.07);
+      --sports: #D63E1E;
+      --tech:   #1250DC;
+      --ent:    #7820DC;
+      --live:   #D63E1E;
+    }
+
+    body {
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .phone {
+      width: 375px;
+      height: 812px;
+      background: var(--phone);
+      border-radius: 54px;
+      border: 1px solid rgba(0,0,0,0.10);
+      box-shadow:
+        0 0 0 0.5px rgba(255,255,255,0.55) inset,
+        0 2px 4px rgba(0,0,0,0.07),
+        0 20px 60px rgba(0,0,0,0.14),
+        0 60px 120px rgba(0,0,0,0.09);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      z-index: 10;
+    }
+    .phone::before {
+      content: '';
+      position: absolute;
+      right: -1.5px; top: 148px;
+      width: 2.5px; height: 72px;
+      background: rgba(0,0,0,0.10);
+      border-radius: 0 2px 2px 0;
+    }
+
+    .notch {
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 126px; height: 30px;
+      background: var(--phone);
+      border-radius: 0 0 18px 18px;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .n-bar { width: 48px; height: 4px; background: rgba(0,0,0,0.08); border-radius: 2px; }
+    .n-dot { width: 9px; height: 9px; background: rgba(0,0,0,0.07); border-radius: 50%; }
+
+    .status {
+      padding: 11px 26px 0;
+      display: flex;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .s-time { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--t1); }
+    .s-icons { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--t2); }
+
+    .header {
+      padding: 10px 22px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--t1);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .live-count {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .lc-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--live);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(214,62,30,0.35); }
+      50%      { box-shadow: 0 0 0 5px rgba(214,62,30,0); }
+    }
+    .lc-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--live);
+      letter-spacing: 0.04em;
+    }
+
+    .tabs {
+      display: flex;
+      padding: 10px 18px 0;
+      gap: 2px;
+      flex-shrink: 0;
+      overflow-x: auto;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      color: var(--t2);
+      white-space: nowrap;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .tab.on { background: var(--t1); color: #fff; }
+
+    .rule { margin: 10px 22px 0; height: 1px; background: var(--div); flex-shrink: 0; }
+
+    .feed {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 13px 16px;
+    }
+    .feed::-webkit-scrollbar { display: none; }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 3px 1px 7px;
+    }
+    .sl-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 9.5px;
+      color: var(--t3);
+      letter-spacing: 0.10em;
+      white-space: nowrap;
+    }
+    .sl-line { flex: 1; height: 1px; background: var(--div); }
+
+    /* compact event row */
+    .ev {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 9px 12px 8px;
+      margin-bottom: 5px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 2px 10px rgba(0,0,0,0.05);
+      opacity: 0;
+      transform: translateY(4px);
+      animation: up 0.3s ease forwards;
+    }
+    @keyframes up { to { opacity:1; transform:translateY(0); } }
+    .ev:nth-child(1) { animation-delay:.03s }
+    .ev:nth-child(2) { animation-delay:.07s }
+    .ev:nth-child(3) { animation-delay:.11s }
+    .ev:nth-child(4) { animation-delay:.15s }
+    .ev:nth-child(5) { animation-delay:.19s }
+    .ev:nth-child(6) { animation-delay:.23s }
+    .ev:nth-child(7) { animation-delay:.27s }
+    .ev:nth-child(8) { animation-delay:.31s }
+    .ev:nth-child(9) { animation-delay:.35s }
+
+    .ev-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .ev-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+    .ev-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .ev-title {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--t1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ev-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 9.5px;
+      flex-shrink: 0;
+    }
+    .ev-badge.live { color: var(--live); animation: blink 2.2s ease infinite; }
+    .ev-badge.soon { color: var(--t3); }
+    @keyframes blink {
+      0%,80%,100% { opacity:1 }
+      40% { opacity:0.3 }
+    }
+
+    .ev-atoms {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 1px;
+      padding-left: 11px;
+    }
+    .atom {
+      font-size: 10.5px;
+      font-weight: 300;
+      color: var(--t2);
+      line-height: 1.55;
+    }
+    .atom + .atom::before { content: ' · '; color: var(--t3); }
+
+    /* atom relative time */
+    .atom-t {
+      font-family: 'DM Mono', monospace;
+      font-size: 9.5px;
+      color: var(--t3);
+      font-weight: 300;
+      margin-left: 2px;
+    }
+
+    /* upcoming time badge — clickable toggle */
+    .ev-badge.soon {
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.15s;
+      border-bottom: 1px dashed var(--t3);
+      padding-bottom: 0.5px;
+    }
+    .ev-badge.soon:hover { color: var(--t2); }
+    .ev-badge.soon.counting {
+      color: var(--t1);
+      border-bottom-color: var(--t2);
+      animation: none;
+    }
+
+    /* upcoming — borderless, lighter */
+    .ev.soon-card {
+      background: transparent;
+      box-shadow: none;
+      border: 1px solid rgba(0,0,0,0.06);
+      padding: 7px 12px;
+    }
+    .ev.soon-card .ev-title { color: var(--t2); font-weight: 400; }
+
+    /* nav */
+    .nav {
+      height: 76px;
+      border-top: 1px solid var(--div);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-around;
+      padding: 12px 0 0;
+      flex-shrink: 0;
+      background: rgba(248,247,244,0.97);
+    }
+    .ni { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+    .ni-icon { width: 20px; height: 20px; color: var(--t3); display: block; }
+    .ni.on .ni-icon { color: var(--t1); }
+    .ni-label { font-size: 9px; color: var(--t3); }
+    .ni.on .ni-label { color: var(--t1); }
+
+    /* ── screens ── */
+    .screen { display: none; flex: 1; overflow: hidden; flex-direction: column; }
+    .screen.active { display: flex; }
+
+    /* ── 简报 screen ── */
+    .brief-feed {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 13px 16px;
+    }
+    .brief-feed::-webkit-scrollbar { display: none; }
+
+    /* subscription chips */
+    .sub-chips {
+      display: flex;
+      gap: 5px;
+      padding: 10px 13px 10px;
+      overflow-x: auto;
+      flex-shrink: 0;
+    }
+    .sub-chips::-webkit-scrollbar { display: none; }
+    .sub-chip {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 11px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      color: var(--t2);
+      background: rgba(0,0,0,0.04);
+      white-space: nowrap;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .sub-chip.on { background: var(--t1); color: #fff; }
+    .sub-chip.on .chip-badge { background: rgba(255,255,255,0.25); color: #fff; }
+    .chip-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      background: rgba(0,0,0,0.08);
+      color: var(--t2);
+      border-radius: 10px;
+      padding: 1px 5px;
+    }
+    .add-chip { color: var(--t3); border: 1px dashed rgba(0,0,0,0.12); background: transparent; }
+
+    /* brief cards */
+    .brief-card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 2px 10px rgba(0,0,0,0.05);
+      opacity: 0;
+      transform: translateY(4px);
+      animation: up 0.3s ease forwards;
+    }
+    .brief-card:nth-child(2) { animation-delay:.06s }
+    .brief-card:nth-child(3) { animation-delay:.12s }
+    .brief-card:nth-child(4) { animation-delay:.18s }
+    .brief-card:nth-child(5) { animation-delay:.24s }
+    .brief-card.read { box-shadow: none; background: rgba(255,255,255,0.6); }
+
+    .brief-meta {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 8px;
+    }
+    .brief-avatar {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 500;
+      flex-shrink: 0;
+      font-family: 'DM Mono', monospace;
+    }
+    .brief-info { display: flex; flex-direction: column; gap: 1px; }
+    .brief-author { font-size: 12px; font-weight: 500; color: var(--t1); }
+    .brief-when {
+      font-family: 'DM Mono', monospace;
+      font-size: 9.5px;
+      color: var(--t3);
+    }
+
+    .brief-orig {
+      font-size: 10.5px;
+      color: var(--t3);
+      font-weight: 300;
+      margin-bottom: 6px;
+      line-height: 1.4;
+      padding-left: 1px;
+    }
+    .brief-body {
+      font-size: 12.5px;
+      font-weight: 300;
+      color: var(--t1);
+      line-height: 1.65;
+      margin-bottom: 9px;
+    }
+    .brief-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--div);
+      padding-top: 8px;
+    }
+    .brief-src-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: var(--t2);
+      border: 1px solid rgba(0,0,0,0.10);
+      border-radius: 4px;
+      padding: 1px 6px;
+    }
+    .brief-read {
+      font-size: 11px;
+      color: var(--t2);
+    }
+
+    /* ── 知识库 screen ── */
+    .kb-feed {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 13px 16px;
+    }
+    .kb-feed::-webkit-scrollbar { display: none; }
+
+    .kb-search {
+      margin: 10px 13px 0;
+      background: rgba(0,0,0,0.04);
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .kb-search svg { color: var(--t3); flex-shrink: 0; }
+    .kb-search-txt {
+      font-size: 12px;
+      color: var(--t3);
+      font-weight: 300;
+    }
+
+    .kb-cluster {
+      margin-bottom: 14px;
+    }
+    .kb-cluster-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    .kb-cluster-name {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--t1);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .kb-cluster-dot { width: 5px; height: 5px; border-radius: 50%; }
+    .kb-count {
+      font-family: 'DM Mono', monospace;
+      font-size: 9.5px;
+      color: var(--t3);
+    }
+
+    .kb-item {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 9px 12px;
+      margin-bottom: 4px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .kb-item-title {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--t1);
+      margin-bottom: 3px;
+      line-height: 1.4;
+    }
+    .kb-item-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 9.5px;
+      color: var(--t3);
+      display: flex;
+      gap: 8px;
+    }
+
+    .kb-recent-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9.5px;
+      color: var(--t3);
+      letter-spacing: 0.10em;
+      margin-bottom: 6px;
+    }
+
+    /* ── 详情页 ── */
+    .detail {
+      position: absolute;
+      inset: 0;
+      background: var(--phone);
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: inherit;
+    }
+    .detail.open { transform: translateY(0); }
+
+    .detail-bar {
+      display: flex;
+      align-items: center;
+      padding: 44px 18px 0;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      color: var(--t2);
+      font-size: 12px;
+      font-weight: 400;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+    }
+    .back-btn svg { color: var(--t2); }
+    .detail-status {
+      margin-left: auto;
+      font-family: 'DM Mono', monospace;
+      font-size: 9.5px;
+      color: var(--live);
+      animation: blink 2.2s ease infinite;
+    }
+
+    .detail-title {
+      padding: 8px 18px 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--t1);
+      line-height: 1.35;
+      flex-shrink: 0;
+    }
+
+    .detail-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 14px 20px;
+    }
+    .detail-scroll::-webkit-scrollbar { display: none; }
+
+    /* AI summary card */
+    .ai-card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .ai-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: var(--t3);
+      letter-spacing: 0.10em;
+      margin-bottom: 7px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .ai-label::before {
+      content: '';
+      display: inline-block;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--tech);
+    }
+    .ai-body {
+      font-size: 12.5px;
+      font-weight: 300;
+      color: var(--t1);
+      line-height: 1.65;
+    }
+    .ai-updated {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: var(--t3);
+      margin-top: 6px;
+    }
+
+    /* stream button */
+    .stream-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 11px 14px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 2px 10px rgba(0,0,0,0.05);
+      cursor: pointer;
+    }
+    .stream-left { display: flex; align-items: center; gap: 9px; }
+    .stream-platform {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--t1);
+    }
+    .stream-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: #18904A;
+      background: rgba(24,144,74,0.08);
+      border-radius: 4px;
+      padding: 1px 5px;
+    }
+    .stream-tag.paid {
+      color: var(--t2);
+      background: rgba(0,0,0,0.05);
+    }
+    .stream-arrow { color: var(--t3); font-size: 12px; }
+
+    /* no stream notice */
+    .no-stream {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--t3);
+      text-align: center;
+      padding: 6px 0 10px;
+    }
+
+    /* livelog */
+    .log-section { margin-bottom: 8px; }
+    .log-head {
+      font-family: 'DM Mono', monospace;
+      font-size: 9.5px;
+      color: var(--t3);
+      letter-spacing: 0.10em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .log-head::after { content: ''; flex: 1; height: 1px; background: var(--div); }
+
+    .log-item {
+      display: flex;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--div);
+    }
+    .log-item:last-child { border-bottom: none; }
+    .log-time {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--t3);
+      flex-shrink: 0;
+      width: 32px;
+      padding-top: 1px;
+    }
+    .log-text {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--t1);
+      line-height: 1.5;
+    }
+    .log-text.highlight { font-weight: 500; color: var(--t1); }
+    .log-ago {
+      font-family: 'DM Mono', monospace;
+      font-size: 9.5px;
+      color: var(--t3);
+      margin-left: 4px;
+    }
+
+    /* ── 小哈 */
+    .xiaoha {
+      position: fixed;
+      bottom: 48px; right: 48px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 7px;
+      animation: wup 0.5s cubic-bezier(0.34,1.56,0.64,1) 1.6s both;
+    }
+    @keyframes wup {
+      from { opacity:0; transform:translateY(16px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .bubble {
+      background: #fff;
+      border-radius: 13px 13px 3px 13px;
+      padding: 9px 13px;
+      max-width: 196px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.09);
+    }
+    .b-txt { font-size: 11.5px; color: var(--t1); line-height: 1.55; }
+    .b-txt strong { color: var(--sports); font-weight: 500; }
+    .char {
+      width: 54px; height: 54px;
+      animation: float 3.4s ease-in-out infinite;
+      cursor: pointer;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0) rotate(-3deg); }
+      50%     { transform: translateY(-7px) rotate(3deg); }
+    }
+    .xh-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8.5px;
+      color: rgba(0,0,0,0.20);
+      letter-spacing: 0.06em;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="notch"><div class="n-bar"></div><div class="n-dot"></div></div>
+
+  <div class="status">
+    <span class="s-time">21:47</span>
+    <span class="s-icons">●●● 79%</span>
+  </div>
+
+  <div class="header">
+    <span class="wordmark">Happening</span>
+    <div class="live-count">
+      <div class="lc-dot"></div>
+      <span class="lc-text">11+ things Happening</span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on">全部</div>
+    <div class="tab">体育</div>
+    <div class="tab">节目</div>
+    <div class="tab">科技</div>
+    <div class="tab">游戏</div>
+  </div>
+
+  <div class="rule"></div>
+
+  <!-- ── 实况 screen ── -->
+  <div class="screen active" id="s-live">
+  <div class="feed">
+
+    <div class="section-label">
+      <span class="sl-text">正在发生</span>
+      <div class="sl-line"></div>
+    </div>
+
+    <!-- 国际新闻 -->
+    <div class="ev" onclick="openDetail('un')" style="cursor:pointer">
+      <div class="ev-top">
+        <div class="ev-left">
+          <div class="ev-dot" style="background:#444"></div>
+          <span class="ev-title">联合国安理会 · 加沙停火紧急会议</span>
+        </div>
+        <span class="ev-badge live">● 直播中</span>
+      </div>
+      <div class="ev-atoms">
+        <span class="atom">美国拒绝表态<span class="atom-t">刚刚</span></span>
+        <span class="atom">中方呼吁立即停火</span>
+        <span class="atom">会议已进行 2 小时 14 分</span>
+      </div>
+    </div>
+
+    <!-- 科技发布 -->
+    <div class="ev">
+      <div class="ev-top">
+        <div class="ev-left">
+          <div class="ev-dot" style="background:var(--tech)"></div>
+          <span class="ev-title">Google I/O 2025 开发者大会</span>
+        </div>
+        <span class="ev-badge live">● 直播中</span>
+      </div>
+      <div class="ev-atoms">
+        <span class="atom">Gemini 2.0 Ultra 正式发布<span class="atom-t">4分钟前</span></span>
+        <span class="atom">Android 16 新功能演示中</span>
+      </div>
+    </div>
+
+    <!-- 航天 -->
+    <div class="ev">
+      <div class="ev-top">
+        <div class="ev-left">
+          <div class="ev-dot" style="background:#0A7AC4"></div>
+          <span class="ev-title">SpaceX · Starship 第9次试飞</span>
+        </div>
+        <span class="ev-badge live">● 发射倒计时</span>
+      </div>
+      <div class="ev-atoms">
+        <span class="atom">T-12分钟<span class="atom-t">刚刚</span></span>
+        <span class="atom">天气条件 GO</span>
+        <span class="atom">目标：助推器海上平台回收</span>
+      </div>
+    </div>
+
+    <!-- 娱乐 -->
+    <div class="ev">
+      <div class="ev-top">
+        <div class="ev-left">
+          <div class="ev-dot" style="background:var(--ent)"></div>
+          <span class="ev-title">第 77 届戛纳电影节 · 开幕式</span>
+        </div>
+        <span class="ev-badge live">● 直播中</span>
+      </div>
+      <div class="ev-atoms">
+        <span class="atom">贾樟柯担任主竞赛评审团主席</span>
+        <span class="atom">红毯正在进行<span class="atom-t">刚刚</span></span>
+      </div>
+    </div>
+
+    <!-- 体育代表 -->
+    <div class="ev" onclick="openDetail('tennis')" style="cursor:pointer">
+      <div class="ev-top">
+        <div class="ev-left">
+          <div class="ev-dot" style="background:#2E9E18"></div>
+          <span class="ev-title">ATP迈阿密 准决赛 · 德约 vs 辛纳</span>
+        </div>
+        <span class="ev-badge live">● 第3盘</span>
+      </div>
+      <div class="ev-atoms">
+        <span class="atom">当盘 4-3 德约领先</span>
+        <span class="atom">辛纳保发球局<span class="atom-t">1分钟前</span></span>
+        <span class="atom">前两盘 6-4 / 4-6</span>
+      </div>
+    </div>
+
+    <!-- 财经 -->
+    <div class="ev">
+      <div class="ev-top">
+        <div class="ev-left">
+          <div class="ev-dot" style="background:#A0640A"></div>
+          <span class="ev-title">美联储 FOMC · 利率决议发布会</span>
+        </div>
+        <span class="ev-badge live">● Powell 讲话中</span>
+      </div>
+      <div class="ev-atoms">
+        <span class="atom">维持利率不变<span class="atom-t">8分钟前</span></span>
+        <span class="atom">暗示年内降息 1-2 次</span>
+        <span class="atom">美元指数下跌 0.4%</span>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:6px">
+      <span class="sl-text">即将开始</span>
+      <div class="sl-line"></div>
+    </div>
+
+    <div class="ev soon-card">
+      <div class="ev-top">
+        <div class="ev-left">
+          <div class="ev-dot" style="background:var(--t3)"></div>
+          <span class="ev-title">NBA季后赛 G7 · 湖人 vs 掘金</span>
+        </div>
+        <span class="ev-badge soon" data-clock="明日 09:30" data-cd="11h 43m 后" onclick="toggleCd(this)">明日 09:30</span>
+      </div>
+    </div>
+
+    <div class="ev soon-card">
+      <div class="ev-top">
+        <div class="ev-left">
+          <div class="ev-dot" style="background:var(--t3)"></div>
+          <span class="ev-title">WHO · 全球疫情应对新闻发布会</span>
+        </div>
+        <span class="ev-badge soon" data-clock="今日 22:00" data-cd="13m 后" onclick="toggleCd(this)">今日 22:00</span>
+      </div>
+    </div>
+
+    <div class="ev soon-card">
+      <div class="ev-top">
+        <div class="ev-left">
+          <div class="ev-dot" style="background:var(--t3)"></div>
+          <span class="ev-title">F1 澳大利亚大奖赛 · 正赛</span>
+        </div>
+        <span class="ev-badge soon" data-clock="明日 14:00" data-cd="16h 后" onclick="toggleCd(this)">明日 14:00</span>
+      </div>
+    </div>
+
+  </div>
+  <!-- ── 详情页 ── -->
+  <div class="detail" id="detail">
+    <div class="detail-bar">
+      <button class="back-btn" onclick="closeDetail()">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="13,4 7,10 13,16"/>
+        </svg>
+        实况
+      </button>
+      <span class="detail-status" id="d-status">● LIVE · 67'</span>
+    </div>
+    <div class="detail-title" id="d-title">国王杯半决赛 · 皇马 vs 巴萨</div>
+
+    <div class="detail-scroll">
+
+      <!-- AI摘要 -->
+      <div class="ai-card">
+        <div class="ai-label">AI 实时摘要</div>
+        <div class="ai-body" id="d-summary">皇马本场整体压制巴萨，维尼修斯今晚状态极佳。上半场皇马率先破门后，巴萨靠 Lewandowski 扳平，下半场维尼修斯再度建功。巴萨目前攻势减弱，晋级形势对皇马有利。</div>
+        <div class="ai-updated">3分钟前更新</div>
+      </div>
+
+      <!-- 直播源 -->
+      <div id="d-streams">
+        <div class="stream-btn">
+          <div class="stream-left">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="10" r="8"/><polygon points="8,7 14,10 8,13"/>
+            </svg>
+            <span class="stream-platform">CCTV5</span>
+            <span class="stream-tag paid">付费</span>
+          </div>
+          <span class="stream-arrow">→</span>
+        </div>
+        <div class="stream-btn">
+          <div class="stream-left">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="10" r="8"/><polygon points="8,7 14,10 8,13"/>
+            </svg>
+            <span class="stream-platform">腾讯体育</span>
+            <span class="stream-tag paid">付费</span>
+          </div>
+          <span class="stream-arrow">→</span>
+        </div>
+      </div>
+
+      <!-- 实时记录 -->
+      <div class="log-section">
+        <div class="log-head">实时记录</div>
+        <div id="d-log">
+          <div class="log-item">
+            <span class="log-time">67'</span>
+            <span class="log-text highlight">维尼修斯左脚抽射破门，皇马 2-1 领先<span class="log-ago">刚刚</span></span>
+          </div>
+          <div class="log-item">
+            <span class="log-time">58'</span>
+            <span class="log-text">巴萨换人，Raphinha 替换 Pedri</span>
+          </div>
+          <div class="log-item">
+            <span class="log-time">51'</span>
+            <span class="log-text">皇马角球机会，Rüdiger 头球偏出</span>
+          </div>
+          <div class="log-item">
+            <span class="log-time">45'+2</span>
+            <span class="log-text highlight">Lewandowski 禁区内转身破门，1-1 扳平<span class="log-ago">22分钟前</span></span>
+          </div>
+          <div class="log-item">
+            <span class="log-time">32'</span>
+            <span class="log-text">Bellingham 黄牌警告</span>
+          </div>
+          <div class="log-item">
+            <span class="log-time">20'</span>
+            <span class="log-text highlight">维尼修斯接 Modric 直塞，推射破门，皇马 1-0</span>
+          </div>
+          <div class="log-item">
+            <span class="log-time">1'</span>
+            <span class="log-text">比赛开始</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  </div><!-- /s-live -->
+
+  <!-- ── 简报 screen ── -->
+  <div class="screen" id="s-brief">
+
+    <!-- subscription chips -->
+    <div class="sub-chips">
+      <div class="sub-chip on">全部 <span class="chip-badge">12</span></div>
+      <div class="sub-chip">和光同尘 <span class="chip-badge">3</span></div>
+      <div class="sub-chip">爱范儿 <span class="chip-badge">2</span></div>
+      <div class="sub-chip">AI前哨站 <span class="chip-badge">4</span></div>
+      <div class="sub-chip">36氪 <span class="chip-badge">2</span></div>
+      <div class="sub-chip add-chip">+ 添加</div>
+    </div>
+
+    <div class="rule" style="margin:0 22px"></div>
+
+    <div class="brief-feed">
+
+      <!-- unread label -->
+      <div class="section-label"><span class="sl-text">未读</span><div class="sl-line"></div></div>
+
+      <div class="brief-card">
+        <div class="brief-meta">
+          <div class="brief-avatar" style="background:#F0EBE0; color:#8B6914">和</div>
+          <div class="brief-info">
+            <span class="brief-author">和光同尘</span>
+            <span class="brief-when">34分钟前 · 节省阅读约 6 分钟</span>
+          </div>
+        </div>
+        <div class="brief-orig">原文：我在硅谷观察 AI 一年，改变了我三个判断</div>
+        <div class="brief-body">作者认为 AI 并未取代创意工作者，反而在放大个人效率上限。真正被替代的是"重复执行"类岗位，而非"提问题"的人。建议普通人先从用 AI 提高自己的输出质量开始，而非焦虑被替代。</div>
+        <div class="brief-foot">
+          <span class="brief-src-tag">公众号</span>
+          <span class="brief-read">读原文 →</span>
+        </div>
+      </div>
+
+      <div class="brief-card">
+        <div class="brief-meta">
+          <div class="brief-avatar" style="background:#E8F0FE; color:#1250DC">爱</div>
+          <div class="brief-info">
+            <span class="brief-author">爱范儿</span>
+            <span class="brief-when">1小时前 · 节省阅读约 4 分钟</span>
+          </div>
+        </div>
+        <div class="brief-orig">原文：小米 16 Ultra 首发体验：这台手机贵在哪</div>
+        <div class="brief-body">影像系统升级明显，徕卡合作进入第三年后调教更成熟。12999 定价让它直面 iPhone 16 Pro Max，作者认为在安卓阵营里它目前是最值得买的旗舰，但溢价仍主要来自品牌。</div>
+        <div class="brief-foot">
+          <span class="brief-src-tag">公众号</span>
+          <span class="brief-read">读原文 →</span>
+        </div>
+      </div>
+
+      <div class="brief-card">
+        <div class="brief-meta">
+          <div class="brief-avatar" style="background:#FEF0E8; color:#E85020">AI</div>
+          <div class="brief-info">
+            <span class="brief-author">AI前哨站</span>
+            <span class="brief-when">2小时前 · 节省阅读约 8 分钟</span>
+          </div>
+        </div>
+        <div class="brief-orig">原文：GPT-5 发布全解读：OpenAI 在赌什么</div>
+        <div class="brief-body">GPT-5 在推理和多模态上大幅领先，但 OpenAI 的真正赌注是"把 API 变成基础设施"。大幅降价是为了让开发者形成依赖，与 AWS 当年策略如出一辙。作者认为短期内无人能正面撼动其生态位。</div>
+        <div class="brief-foot">
+          <span class="brief-src-tag">公众号</span>
+          <span class="brief-read">读原文 →</span>
+        </div>
+      </div>
+
+      <!-- read label -->
+      <div class="section-label" style="margin-top:6px"><span class="sl-text">已读</span><div class="sl-line"></div></div>
+
+      <div class="brief-card read">
+        <div class="brief-meta">
+          <div class="brief-avatar" style="background:#F4F4F4; color:#AAAAAA">36</div>
+          <div class="brief-info">
+            <span class="brief-author" style="color:var(--t2)">36氪</span>
+            <span class="brief-when">昨天</span>
+          </div>
+        </div>
+        <div class="brief-orig">原文：红牛车队的裂痕，从一份合同开始</div>
+        <div class="brief-body" style="color:var(--t3)">维斯塔潘续约谈判陷入僵局，核心争议是对车队技术路线的主导权。消息人士称若谈判破裂，梅赛德斯已准备好报价。</div>
+        <div class="brief-foot">
+          <span class="brief-src-tag" style="color:var(--t3); border-color:var(--t3)">公众号</span>
+          <span class="brief-read" style="color:var(--t3)">读原文 →</span>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /s-brief -->
+
+  <!-- ── 知识库 screen ── -->
+  <div class="screen" id="s-kb">
+    <div class="kb-search">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <circle cx="8.5" cy="8.5" r="5.5"/>
+        <line x1="13" y1="13" x2="18" y2="18"/>
+      </svg>
+      <span class="kb-search-txt">搜索你的知识库…</span>
+    </div>
+    <div class="kb-feed">
+
+      <div class="kb-cluster">
+        <div class="kb-cluster-head">
+          <div class="kb-cluster-name">
+            <div class="kb-cluster-dot" style="background:var(--tech)"></div>
+            人工智能
+          </div>
+          <span class="kb-count">14 篇</span>
+        </div>
+        <div class="kb-item">
+          <div class="kb-item-title">GPT-5 技术报告：多模态推理能力分析</div>
+          <div class="kb-item-meta"><span>OpenAI Blog</span><span>今天保存</span></div>
+        </div>
+        <div class="kb-item">
+          <div class="kb-item-title">Karpathy：如何用 LLM 构建个人知识库</div>
+          <div class="kb-item-meta"><span>karpathy.ai</span><span>3天前</span></div>
+        </div>
+        <div class="kb-item">
+          <div class="kb-item-title">Claude 的 Constitutional AI 方法详解</div>
+          <div class="kb-item-meta"><span>Anthropic</span><span>上周</span></div>
+        </div>
+      </div>
+
+      <div class="kb-cluster">
+        <div class="kb-cluster-head">
+          <div class="kb-cluster-name">
+            <div class="kb-cluster-dot" style="background:#E8001C"></div>
+            F1 赛事
+          </div>
+          <span class="kb-count">8 篇</span>
+        </div>
+        <div class="kb-item">
+          <div class="kb-item-title">2025 赛季车队实力对比：红牛 vs 迈凯伦</div>
+          <div class="kb-item-meta"><span>Autosport</span><span>2天前</span></div>
+        </div>
+        <div class="kb-item">
+          <div class="kb-item-title">维斯塔潘的驾驶风格：数据分析</div>
+          <div class="kb-item-meta"><span>The Race</span><span>上周</span></div>
+        </div>
+      </div>
+
+      <div class="kb-cluster">
+        <div class="kb-cluster-head">
+          <div class="kb-cluster-name">
+            <div class="kb-cluster-dot" style="background:#2E9E18"></div>
+            网球
+          </div>
+          <span class="kb-count">6 篇</span>
+        </div>
+        <div class="kb-item">
+          <div class="kb-item-title">辛纳的崛起：从少年天才到世界第一</div>
+          <div class="kb-item-meta"><span>Tennis Magazine</span><span>5天前</span></div>
+        </div>
+        <div class="kb-item">
+          <div class="kb-item-title">ATP 积分规则完全指南</div>
+          <div class="kb-item-meta"><span>atptour.com</span><span>上月</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /s-kb -->
+
+  <div class="nav">
+    <!-- 实况: pulse wave -->
+    <div class="ni on" onclick="switchTab(this,'s-live')">
+      <svg class="ni-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="1,10 4,10 6,4 8,16 10,6 12,14 14,10 19,10"/>
+      </svg>
+      <span class="ni-label">实况</span>
+    </div>
+    <!-- 简报: condensed lines -->
+    <div class="ni" onclick="switchTab(this,'s-brief')">
+      <svg class="ni-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <line x1="3" y1="5"  x2="17" y2="5"/>
+        <line x1="3" y1="9"  x2="14" y2="9"/>
+        <line x1="3" y1="13" x2="17" y2="13"/>
+        <line x1="3" y1="17" x2="11" y2="17"/>
+      </svg>
+      <span class="ni-label">简报</span>
+    </div>
+    <!-- 知识库: linked nodes -->
+    <div class="ni" onclick="switchTab(this,'s-kb')">
+      <svg class="ni-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="10" cy="4"  r="2"/>
+        <circle cx="4"  cy="15" r="2"/>
+        <circle cx="16" cy="15" r="2"/>
+        <line x1="10" y1="6"  x2="4"  y2="13"/>
+        <line x1="10" y1="6"  x2="16" y2="13"/>
+        <line x1="6"  y1="15" x2="14" y2="15"/>
+      </svg>
+      <span class="ni-label">知识库</span>
+    </div>
+    <!-- 我的: person silhouette -->
+    <div class="ni">
+      <svg class="ni-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="10" cy="6.5" r="3"/>
+        <path d="M3 18 Q3 12 10 12 Q17 12 17 18"/>
+      </svg>
+      <span class="ni-label">我的</span>
+    </div>
+  </div>
+</div>
+
+<!-- 小哈 -->
+<div class="xiaoha">
+  <div class="bubble">
+    <div class="b-txt"><strong>德约第3盘领先了</strong><br>4-3，刚刚破发，感觉要赢</div>
+  </div>
+  <div class="char">
+    <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="22" y1="10" x2="14" y2="3"  stroke="#C83A1A" stroke-width="2" stroke-linecap="round"/>
+      <line x1="38" y1="10" x2="46" y2="3"  stroke="#C83A1A" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="14" cy="3"  r="2.4" fill="#E85533"/>
+      <circle cx="46" cy="3"  r="2.4" fill="#E85533"/>
+      <ellipse cx="30" cy="21" rx="15" ry="14" fill="#E8441C"/>
+      <ellipse cx="30" cy="38" rx="13" ry="10" fill="#D03A18"/>
+      <ellipse cx="30" cy="34" rx="11" ry="2.5" fill="#E8441C" opacity=".45"/>
+      <ellipse cx="30" cy="39" rx="10" ry="2"   fill="#E8441C" opacity=".35"/>
+      <ellipse cx="30" cy="44" rx="8"  ry="1.6" fill="#E8441C" opacity=".25"/>
+      <ellipse cx="11" cy="37" rx="6.5" ry="4.5" fill="#D03A18" transform="rotate(-22 11 37)"/>
+      <ellipse cx="9"  cy="35" rx="3.5" ry="2.5" fill="#E8441C" transform="rotate(-22 9 35)"/>
+      <ellipse cx="49" cy="37" rx="6.5" ry="4.5" fill="#D03A18" transform="rotate(22 49 37)"/>
+      <ellipse cx="51" cy="35" rx="3.5" ry="2.5" fill="#E8441C" transform="rotate(22 51 35)"/>
+      <line x1="22" y1="47" x2="18" y2="55" stroke="#B83010" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="27" y1="49" x2="25" y2="57" stroke="#B83010" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="33" y1="49" x2="35" y2="57" stroke="#B83010" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="38" y1="47" x2="42" y2="55" stroke="#B83010" stroke-width="2.2" stroke-linecap="round"/>
+      <circle cx="24" cy="19" r="5"   fill="white"/>
+      <circle cx="36" cy="19" r="5"   fill="white"/>
+      <circle cx="25" cy="20" r="3.2" fill="#111"/>
+      <circle cx="37" cy="20" r="3.2" fill="#111"/>
+      <circle cx="26" cy="18.5" r="1.2" fill="white"/>
+      <circle cx="38" cy="18.5" r="1.2" fill="white"/>
+      <path d="M24 26 Q30 31 36 26" stroke="#B83010" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    </svg>
+  </div>
+  <div class="xh-label">小哈 · 桌面端</div>
+</div>
+
+<script>
+  function toggleCd(el) {
+    const isCounting = el.classList.toggle('counting');
+    el.textContent = isCounting ? el.dataset.cd : el.dataset.clock;
+  }
+
+  function switchTab(ni, screenId) {
+    document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    ni.classList.add('on');
+    document.getElementById(screenId).classList.add('active');
+  }
+
+  const events = {
+    tennis: {
+      title: 'ATP迈阿密 准决赛 · 德约 vs 辛纳',
+      status: '● 第3盘 · 4-3',
+      summary: '本场已进行近 2 小时。德约科维奇第1盘发挥稳定率先拿下，第2盘中段一度被辛纳连破两局拉开差距，但最终靠破发追平拿下抢七。第3盘目前德约 4-3 领先，辛纳刚保住一个关键发球局，局势仍胶着。',
+      streams: [
+        { name: 'Tennis TV', tag: '付费' },
+        { name: 'CCTV5+', tag: '付费' }
+      ],
+      log: [
+        { time: '4-3', text: '德约保发，领先一破', highlight: true, ago: '刚刚' },
+        { time: '3-3', text: '辛纳保发球局，追平' },
+        { time: '3-2', text: '德约破发成功，率先领先' },
+        { time: '2-2', text: '辛纳 Ace 球，保住发球局', highlight: true, ago: '8分钟前' },
+        { time: '第2盘', text: '辛纳 6-4 赢下，大比分扳平 1-1', highlight: true },
+        { time: '第1盘', text: '德约 6-4 赢下首盘' },
+      ]
+    },
+    un: {
+      title: '联合国安理会 · 加沙停火紧急会议',
+      status: '● 进行中 2h 14m',
+      summary: '会议由英法两国联合发起，就加沙地带人道主义危机寻求停火决议。美国表示"不排除动用否决权"，中俄均呼吁立即无条件停火。目前草案文本尚在磋商阶段，投票时间未定。',
+      streams: [
+        { name: 'UN Web TV', tag: '免费直播', free: true }
+      ],
+      log: [
+        { time: '刚刚', text: '美方代表：对草案措辞仍有保留', highlight: true, ago: '' },
+        { time: '12m', text: '中国代表：支持立即无条件停火' },
+        { time: '28m', text: '英国提交修订后草案文本' },
+        { time: '45m', text: '法国代表发言，强调人道主义走廊', highlight: true },
+        { time: '1h', text: '会议正式开始，轮值主席致辞' },
+      ]
+    }
+  };
+
+  function openDetail(key) {
+    const ev = events[key];
+    document.getElementById('d-title').textContent = ev.title;
+    document.getElementById('d-status').textContent = ev.status;
+    document.getElementById('d-summary').textContent = ev.summary;
+
+    const streamsEl = document.getElementById('d-streams');
+    if (ev.streams && ev.streams.length) {
+      streamsEl.innerHTML = ev.streams.map(s => `
+        <div class="stream-btn">
+          <div class="stream-left">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="10" r="8"/><polygon points="8,7 14,10 8,13"/>
+            </svg>
+            <span class="stream-platform">${s.name}</span>
+            <span class="stream-tag${s.free ? '' : ' paid'}">${s.tag}</span>
+          </div>
+          <span class="stream-arrow">→</span>
+        </div>`).join('');
+    } else {
+      streamsEl.innerHTML = '<div class="no-stream">此事件暂无公开直播源</div>';
+    }
+
+    document.getElementById('d-log').innerHTML = ev.log.map(l => `
+      <div class="log-item">
+        <span class="log-time">${l.time}</span>
+        <span class="log-text${l.highlight ? ' highlight' : ''}">${l.text}${l.ago ? `<span class="log-ago">${l.ago}</span>` : ''}</span>
+      </div>`).join('');
+
+    document.getElementById('detail').classList.add('open');
+  }
+
+  function closeDetail() {
+    document.getElementById('detail').classList.remove('open');
+  }
+</script>
+</body>
+</html>
