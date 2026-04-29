@@ -180,11 +180,49 @@ GET http://localhost:3000/api/events/nba-lal-gsw-live/timeline
 GET http://localhost:3000/api/stream/events?sport=basketball
 ```
 
+持久化 / fixture 模式：
+
+```bash
+HAPPENING_PROVIDER_MODE=fixture \
+HAPPENING_DB_PATH=./data/happening.db \
+HAPPENING_FIXTURE_PATH=./data/sports-fixture.json \
+npm run dev
+```
+
+fixture JSON 形状：
+
+```json
+{
+  "snapshots": [
+    {
+      "event": {
+        "id": "nba-lal-gsw-live",
+        "title": "Los Angeles Lakers vs Golden State Warriors",
+        "category": "sports",
+        "status": "live",
+        "sport": "basketball",
+        "updatedAt": "2026-04-29T10:00:00.000Z"
+      },
+      "timeline": []
+    }
+  ]
+}
+```
+
+完整开发规划已保存到：
+
+```text
+docs/plans/2026-04-29-happening-development-roadmap.md
+```
+
 测试覆盖：
 
 - `MockSportsProvider` 返回标准化体育事件和时间线
 - `InMemoryEventStore` 支持事件 upsert、实况过滤、详情读取和时间线替换
+- `SQLiteEventStore` 支持本地持久化、重启后读取、实况过滤和时间线替换
 - `ManualSportsProvider` 支持把手工/真实来源快照同步进 store，并从 store 提供读取
+- `FixtureSportsProvider` 支持从 JSON fixture 加载标准化快照并同步进 store
+- API server 支持默认 mock 模式和 fixture + SQLite 模式
 - API 健康检查
 - 实况事件列表和 sport 过滤
 - 单场事件详情
@@ -195,9 +233,9 @@ GET http://localhost:3000/api/stream/events?sport=basketball
 当前模块边界：
 
 - `packages/core`：事实模型、Provider 接口、Store 接口、同步结果类型
-- `packages/storage`：先提供 `InMemoryEventStore`，接口按未来 SQLite 实现设计
-- `packages/providers`：`MockSportsProvider` 用于 API demo；`ManualSportsProvider` 作为真实数据源适配器骨架，可把外部抓取结果标准化后写入 store
-- `apps/api`：只依赖 `HappeningProvider`，因此可以无缝切换 mock provider、manual provider 或后续真实 provider
+- `packages/storage`：提供 `InMemoryEventStore` 和 `SQLiteEventStore`；SQLite 实现使用 Node 内置 `node:sqlite`
+- `packages/providers`：`MockSportsProvider` 用于 API demo；`ManualSportsProvider` 作为真实数据源适配器骨架；`FixtureSportsProvider` 作为本地 JSON 数据源入口，可把外部抓取结果标准化后写入 store
+- `apps/api`：只依赖 `HappeningProvider`，支持 mock mode 与 fixture + SQLite mode，因此可以无缝切换 mock provider、manual provider 或后续真实 provider
 
 ---
 
