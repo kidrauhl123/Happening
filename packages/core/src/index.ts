@@ -6,6 +6,8 @@ export type {
   HappeningProvider,
   LiveEventQuery,
   ProviderSyncResult,
+  ProviderSyncStatus,
+  SyncStatusValue,
   TimelineAtom,
   TimelineAtomType,
   TimelineImportance,

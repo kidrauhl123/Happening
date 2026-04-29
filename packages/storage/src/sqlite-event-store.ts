@@ -1,5 +1,5 @@
 import { DatabaseSync } from "node:sqlite";
-import type { Event, EventStore, LiveEventQuery, TimelineAtom } from "../../core/src/index.js";
+import type { Event, EventStore, LiveEventQuery, ProviderSyncStatus, TimelineAtom } from "../../core/src/index.js";
 
 export type SQLiteEventStoreOptions = {
   path?: string;
@@ -11,6 +11,16 @@ type EventRow = {
 
 type TimelineAtomRow = {
   atom_json: string;
+};
+
+type SyncStatusRow = {
+  provider_id: string;
+  status: "success" | "error";
+  started_at: string;
+  finished_at: string;
+  events_upserted: number;
+  timelines_replaced: number;
+  error: string | null;
 };
 
 export class SQLiteEventStore implements EventStore {
@@ -147,6 +157,55 @@ export class SQLiteEventStore implements EventStore {
     return rows.map((row) => JSON.parse(row.atom_json) as TimelineAtom);
   }
 
+  async recordSyncStatus(status: ProviderSyncStatus): Promise<void> {
+    this.database
+      .prepare(`
+        INSERT INTO provider_sync_status (
+          provider_id,
+          status,
+          started_at,
+          finished_at,
+          events_upserted,
+          timelines_replaced,
+          error
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(provider_id) DO UPDATE SET
+          status = excluded.status,
+          started_at = excluded.started_at,
+          finished_at = excluded.finished_at,
+          events_upserted = excluded.events_upserted,
+          timelines_replaced = excluded.timelines_replaced,
+          error = excluded.error
+      `)
+      .run(
+        status.providerId,
+        status.status,
+        status.startedAt,
+        status.finishedAt,
+        status.eventsUpserted,
+        status.timelinesReplaced,
+        status.error ?? null,
+      );
+  }
+
+  async getSyncStatus(providerId: string): Promise<ProviderSyncStatus | undefined> {
+    const row = this.database
+      .prepare("SELECT * FROM provider_sync_status WHERE provider_id = ?")
+      .get(providerId) as SyncStatusRow | undefined;
+
+    if (!row) return undefined;
+
+    return {
+      providerId: row.provider_id,
+      status: row.status,
+      startedAt: row.started_at,
+      finishedAt: row.finished_at,
+      eventsUpserted: row.events_upserted,
+      timelinesReplaced: row.timelines_replaced,
+      ...(row.error ? { error: row.error } : {}),
+    };
+  }
+
   private initialize(): void {
     this.database.exec(`
       CREATE TABLE IF NOT EXISTS events (
@@ -172,6 +231,16 @@ export class SQLiteEventStore implements EventStore {
         text TEXT NOT NULL,
         importance TEXT NOT NULL,
         atom_json TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS provider_sync_status (
+        provider_id TEXT PRIMARY KEY,
+        status TEXT NOT NULL,
+        started_at TEXT NOT NULL,
+        finished_at TEXT NOT NULL,
+        events_upserted INTEGER NOT NULL,
+        timelines_replaced INTEGER NOT NULL,
+        error TEXT
       );
 
       CREATE INDEX IF NOT EXISTS events_live_sport_idx ON events(status, category, sport);

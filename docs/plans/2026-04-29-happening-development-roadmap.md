@@ -38,12 +38,13 @@ Happening is the facts layer for "what is happening right now". The first vertic
 - Server bootstrap switch between mock and persisted fixture mode
 - README updated with local persistence instructions
 
-### Milestone 3 — Next
+### Milestone 3 — Current
 
-- Worker app to periodically sync providers
-- Source metadata and attribution fields
-- Provider error reporting and sync status
-- Webhook registration/delivery
+- Worker app to periodically sync providers — implemented with `apps/worker`
+- Sync status persistence — implemented with `provider_sync_status`
+- Provider error reporting through worker status — implemented
+- Source metadata and attribution fields — next
+- Webhook registration/delivery — next
 
 ### Milestone 4 — Later
 

@@ -35,6 +35,16 @@ export type ProviderSyncResult = {
   timelinesReplaced: number;
 };
 
+export type SyncStatusValue = "success" | "error";
+
+export type ProviderSyncStatus = ProviderSyncResult & {
+  providerId: string;
+  status: SyncStatusValue;
+  startedAt: string;
+  finishedAt: string;
+  error?: string;
+};
+
 export interface HappeningProvider {
   listLiveEvents(query?: LiveEventQuery): Promise<Event[]>;
   getEvent(eventId: string): Promise<Event | undefined>;
