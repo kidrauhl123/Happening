@@ -6,3 +6,5 @@ export type { FixtureSportsProviderOptions } from "./fixture-sports-provider.js"
 export { ManualSportsProvider } from "./manual-sports-provider.js";
 export type { ManualSportsProviderOptions, SportsSnapshot } from "./manual-sports-provider.js";
 export { MockSportsProvider } from "./mock-sports-provider.js";
+export { UsgsEarthquakeProvider } from "./usgs-earthquake-provider.js";
+export type { UsgsEarthquakeProviderOptions } from "./usgs-earthquake-provider.js";

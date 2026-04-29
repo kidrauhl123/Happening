@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import type { HappeningProvider, LiveEventQuery } from "../../../packages/core/src/index.js";
+import type { Event, HappeningProvider, LiveEventQuery } from "../../../packages/core/src/index.js";
 import { renderDashboardHtml } from "./dashboard.js";
 import { SPORT_OPTIONS } from "./sports.js";
 
@@ -15,6 +15,14 @@ function liveEventQueryFromUrl(url: string): LiveEventQuery {
   };
 }
 
+function groupHappenings(events: Event[]): { live: Event[]; recent: Event[]; upcoming: Event[] } {
+  return {
+    live: events.filter((event) => event.status === "live"),
+    recent: events.filter((event) => event.status === "recent" || event.status === "ended"),
+    upcoming: events.filter((event) => event.status === "scheduled"),
+  };
+}
+
 export function createApp({ provider }: AppDependencies): Hono {
   const app = new Hono();
 
@@ -27,6 +35,11 @@ export function createApp({ provider }: AppDependencies): Hono {
   app.get("/api/events/live", async (c) => {
     const events = await provider.listLiveEvents(liveEventQueryFromUrl(c.req.url));
     return c.json({ events });
+  });
+
+  app.get("/api/happenings", async (c) => {
+    const events = await provider.listLiveEvents(liveEventQueryFromUrl(c.req.url));
+    return c.json({ events, sections: groupHappenings(events) });
   });
 
   app.get("/api/events/:eventId", async (c) => {

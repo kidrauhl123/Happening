@@ -54,6 +54,8 @@ Happening is the facts layer for "what is happening right now". The first vertic
 - Broad default ESPN source set — implemented across basketball, football, baseball, hockey, soccer + European cups, F1/racing, tennis, golf/LPGA, MMA/UFC, volleyball, and lacrosse
 - Dashboard sport selector — implemented with `/api/sports` options instead of free-text filtering
 - ESPN historical/completed schedule windows — implemented with `HAPPENING_ESPN_DATES` and `HAPPENING_ESPN_LIMIT`
+- World activity dashboard sections — implemented with `/api/happenings` grouped into live/recent/upcoming
+- USGS earthquake provider — implemented as the first non-sports provider to keep the world radar populated
 - JS SDK
 - Small admin/debug UI
 - Deployment packaging

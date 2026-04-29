@@ -11,11 +11,16 @@ describe("Happening dashboard", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toContain("text/html");
-    expect(html).toContain("Happening 实况面板");
-    expect(html).toContain("/api/events/live");
+    expect(html).toContain("Happening 世界动态雷达");
+    expect(html).toContain("/api/happenings");
     expect(html).toContain("时间线");
     expect(html).toContain("来源");
     expect(html).toContain("项目过滤");
+    expect(html).toContain("正在发生");
+    expect(html).toContain("刚刚发生");
+    expect(html).toContain("即将发生");
+    expect(html).toContain("世界动态雷达");
+    expect(html).toContain("/api/happenings");
     expect(html).toContain("<select id=\"sport\"");
     expect(html).toContain("全部项目");
   });

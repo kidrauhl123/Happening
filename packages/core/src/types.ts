@@ -1,6 +1,6 @@
-export type EventCategory = "sports" | "news" | "other";
-export type EventStatus = "scheduled" | "live" | "ended" | "unknown";
-export type TimelineAtomType = "score" | "status" | "highlight" | "commentary";
+export type EventCategory = "sports" | "earthquake" | "news" | "markets" | "tech" | "weather" | "space" | "other";
+export type EventStatus = "scheduled" | "live" | "recent" | "ended" | "unknown";
+export type TimelineAtomType = "score" | "status" | "highlight" | "commentary" | "observation";
 export type TimelineImportance = "low" | "normal" | "high";
 
 export type SourceMetadata = {
@@ -23,6 +23,9 @@ export type Event = {
   participants?: string[];
   score?: Record<string, number | string>;
   clock?: string;
+  region?: string;
+  magnitude?: number;
+  coordinates?: { longitude: number; latitude: number; depthKm?: number };
   source?: SourceMetadata;
   updatedAt: string;
 };

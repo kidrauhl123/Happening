@@ -42,6 +42,19 @@ describe("Happening API", () => {
     expect(body.events.every((event: { sport?: string; status: string }) => event.sport === "basketball" && event.status === "live")).toBe(true);
   });
 
+  it("lists generalized world happenings grouped by activity section", async () => {
+    const response = await app.request("/api/happenings");
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      sections: {
+        live: expect.any(Array),
+        recent: expect.any(Array),
+        upcoming: expect.any(Array),
+      },
+    });
+  });
+
   it("returns event details and timeline", async () => {
     const listResponse = await app.request("/api/events/live?sport=basketball");
     const { events } = await listResponse.json();

@@ -1,8 +1,8 @@
 import type { HappeningProvider } from "../../../packages/core/src/index.js";
-import { CompositeProvider, EspnSportsProvider, FixtureSportsProvider, MockSportsProvider } from "../../../packages/providers/src/index.js";
+import { CompositeProvider, EspnSportsProvider, FixtureSportsProvider, MockSportsProvider, UsgsEarthquakeProvider } from "../../../packages/providers/src/index.js";
 import { SQLiteEventStore } from "../../../packages/storage/src/index.js";
 
-export type ProviderMode = "mock" | "fixture" | "espn";
+export type ProviderMode = "mock" | "fixture" | "espn" | "world";
 
 export type EspnSourceConfig = {
   sport: string;
@@ -73,9 +73,9 @@ export async function createProviderFromConfig(config: ProviderConfig = {}): Pro
     return provider;
   }
 
-  if (mode === "espn") {
+  if (mode === "espn" || mode === "world") {
     const sources = config.espnSources ?? (config.sport || config.league ? [{ sport: config.sport ?? "basketball", league: config.league ?? "nba" }] : DEFAULT_ESPN_SOURCES);
-    const providers = sources.map(
+    const providers: HappeningProvider[] = sources.map(
       (source) =>
         new EspnSportsProvider({
           sport: source.sport,
@@ -85,6 +85,9 @@ export async function createProviderFromConfig(config: ProviderConfig = {}): Pro
           limit: config.espnLimit,
         }),
     );
+    if (mode === "world") {
+      providers.push(new UsgsEarthquakeProvider());
+    }
     return providers.length === 1 ? providers[0] : new CompositeProvider(providers);
   }
 

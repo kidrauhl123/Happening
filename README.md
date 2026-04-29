@@ -1,12 +1,12 @@
 # Happening
 
-Happening 是一个**实况信息聚合工具**。
+Happening 是一个**世界动态雷达 / 实况信息聚合工具**。
 
 它的目标很简单：
 
 > 搜寻正在发生的事件，整理成统一格式，通过 API 提供给其他软件使用。
 
-第一阶段重点做**体育赛事实况**，例如比分、比赛时间、阶段、关键事件和实时播报。
+第一阶段先从**体育赛事实况**做起，例如比分、比赛时间、阶段、关键事件和实时播报；下一步扩成“世界动态雷达”，把体育、地震、科技、市场、新闻、天气、太空等来源都放进同一个事实层。
 
 ---
 
@@ -175,13 +175,29 @@ npm run dev
 ```http
 GET http://localhost:3000/
 GET http://localhost:3000/health
+GET http://localhost:3000/api/happenings
+GET http://localhost:3000/api/happenings?category=earthquake
 GET http://localhost:3000/api/events/live?sport=basketball
 GET http://localhost:3000/api/events/nba-lal-gsw-live
 GET http://localhost:3000/api/events/nba-lal-gsw-live/timeline
 GET http://localhost:3000/api/stream/events?sport=basketball
 ```
 
-根路径 `/` 是最简陋的内置前端 dashboard，可以看到当前掌握的 live events、比分/阶段、timeline 和 source metadata。
+根路径 `/` 是内置前端 dashboard，现在按“正在发生 / 刚刚发生 / 即将发生”三栏展示世界动态；除了体育比分/阶段/timeline/source metadata，也可以展示地震等非体育事件。
+
+世界动态模式会同时聚合 ESPN 体育 scoreboard 和 USGS 地震 feed：
+
+```bash
+HAPPENING_PROVIDER_MODE=world \
+HAPPENING_INCLUDE_NON_LIVE=true \
+npm run dev
+```
+
+其中 USGS 地震 provider 使用公开 GeoJSON feed，不需要 API key：
+
+```text
+https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+```
 
 ESPN 默认真实 scoreboard 模式（不需要 API key）会聚合一组常见项目：NBA/WNBA/NCAA 篮球、NFL/NCAA 橄榄球、MLB、NHL、多国足球和欧战、F1、网球、高尔夫/LPGA、UFC、排球、长曲棍球：
 
@@ -300,7 +316,8 @@ docs/plans/2026-04-29-happening-development-roadmap.md
 - `SQLiteEventStore` 支持本地持久化、重启后读取、实况过滤、时间线替换和 provider sync status 记录
 - `SourceMetadata` 支持 providerId、externalId、url、priority、confidence、firstSeenAt、lastSeenAt，用于事实溯源
 - `SyncWorker` 支持执行 provider sync、记录 success/error 状态，并可通过 `npm run worker` / `npm run worker:once` 运行
-- 内置 `/` dashboard 支持查看 live events、timeline、raw JSON 和 source metadata
+- 内置 `/` dashboard 支持按“正在发生 / 刚刚发生 / 即将发生”三栏查看 happenings、timeline、raw JSON 和 source metadata
+- `UsgsEarthquakeProvider` 支持读取 USGS 公开地震 GeoJSON feed，把最近地震映射成 Happening 事件
 - `ManualSportsProvider` 支持把手工/真实来源快照同步进 store，并从 store 提供读取
 - `FixtureSportsProvider` 支持从 JSON fixture 加载标准化快照并同步进 store
 - `EspnSportsProvider` 支持读取 ESPN 公开 scoreboard API，并映射成 Happening 标准 Event / TimelineAtom / SourceMetadata
@@ -320,7 +337,7 @@ docs/plans/2026-04-29-happening-development-roadmap.md
 - `packages/core`：事实模型、Provider 接口、Store 接口、同步结果类型
 - `packages/storage`：提供 `InMemoryEventStore` 和 `SQLiteEventStore`；SQLite 实现使用 Node 内置 `node:sqlite`
 - `packages/providers`：`MockSportsProvider` 用于 API demo；`ManualSportsProvider` 作为真实数据源适配器骨架；`FixtureSportsProvider` 作为本地 JSON 数据源入口，可把外部抓取结果标准化后写入 store
-- `apps/api`：只依赖 `HappeningProvider`，支持 mock mode 与 fixture + SQLite mode，因此可以无缝切换 mock provider、manual provider 或后续真实 provider；根路径 `/` 提供最小 dashboard
+- `apps/api`：只依赖 `HappeningProvider`，支持 mock mode、fixture + SQLite mode、ESPN mode 和 world mode；根路径 `/` 提供三栏世界动态 dashboard
 - `apps/worker`：定时执行 provider sync，把同步结果和错误写入 `provider_sync_status`，用于持续刷新事实库
 
 ---
