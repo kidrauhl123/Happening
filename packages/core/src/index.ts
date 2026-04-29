@@ -7,6 +7,7 @@ export type {
   LiveEventQuery,
   ProviderSyncResult,
   ProviderSyncStatus,
+  SourceMetadata,
   SyncStatusValue,
   TimelineAtom,
   TimelineAtomType,

@@ -43,7 +43,8 @@ Happening is the facts layer for "what is happening right now". The first vertic
 - Worker app to periodically sync providers — implemented with `apps/worker`
 - Sync status persistence — implemented with `provider_sync_status`
 - Provider error reporting through worker status — implemented
-- Source metadata and attribution fields — next
+- Source metadata and attribution fields — implemented as `SourceMetadata` on `Event` and `TimelineAtom`
+- Minimal frontend/dashboard — implemented at API root `/` so the user can see known live events, timelines, raw JSON, and sources
 - Webhook registration/delivery — next
 
 ### Milestone 4 — Later

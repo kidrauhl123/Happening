@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { HappeningProvider, LiveEventQuery } from "../../../packages/core/src/index.js";
+import { renderDashboardHtml } from "./dashboard.js";
 
 export type AppDependencies = {
   provider: HappeningProvider;
@@ -15,6 +16,8 @@ function liveEventQueryFromUrl(url: string): LiveEventQuery {
 
 export function createApp({ provider }: AppDependencies): Hono {
   const app = new Hono();
+
+  app.get("/", (c) => c.html(renderDashboardHtml()));
 
   app.get("/health", (c) => c.json({ ok: true, service: "happening-api" }));
 

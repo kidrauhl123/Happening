@@ -3,6 +3,16 @@ export type EventStatus = "scheduled" | "live" | "ended" | "unknown";
 export type TimelineAtomType = "score" | "status" | "highlight" | "commentary";
 export type TimelineImportance = "low" | "normal" | "high";
 
+export type SourceMetadata = {
+  providerId: string;
+  externalId?: string;
+  url?: string;
+  priority?: number;
+  confidence?: number;
+  firstSeenAt?: string;
+  lastSeenAt: string;
+};
+
 export type Event = {
   id: string;
   title: string;
@@ -13,6 +23,7 @@ export type Event = {
   participants?: string[];
   score?: Record<string, number | string>;
   clock?: string;
+  source?: SourceMetadata;
   updatedAt: string;
 };
 
@@ -23,6 +34,7 @@ export type TimelineAtom = {
   type: TimelineAtomType;
   text: string;
   importance: TimelineImportance;
+  source?: SourceMetadata;
 };
 
 export type LiveEventQuery = {
