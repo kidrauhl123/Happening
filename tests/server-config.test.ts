@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { afterEach, describe, expect, it } from "vitest";
 import type { Event } from "../packages/core/src/index.js";
-import { createProviderFromConfig } from "../apps/api/src/config.js";
+import { DEFAULT_ESPN_SOURCES, providerConfigFromEnv, createProviderFromConfig } from "../apps/api/src/config.js";
 
 const tempDirs: string[] = [];
 
@@ -53,6 +53,26 @@ describe("createProviderFromConfig", () => {
     const provider = await createProviderFromConfig({ mode: "espn" });
 
     expect(provider.constructor.name).toBe("CompositeProvider");
+    expect(DEFAULT_ESPN_SOURCES).toContainEqual({ sport: "lacrosse", league: "mens-college-lacrosse" });
+    expect(DEFAULT_ESPN_SOURCES).toContainEqual({ sport: "volleyball", league: "mens-college-volleyball" });
+    expect(DEFAULT_ESPN_SOURCES).toContainEqual({ sport: "golf", league: "lpga" });
+    expect(DEFAULT_ESPN_SOURCES).toContainEqual({ sport: "soccer", league: "uefa.europa" });
+  });
+
+  it("parses an ESPN dates window from env for completed schedules", () => {
+    const config = providerConfigFromEnv({
+      HAPPENING_PROVIDER_MODE: "espn",
+      HAPPENING_INCLUDE_NON_LIVE: "true",
+      HAPPENING_ESPN_DATES: "20260401-20260429",
+      HAPPENING_ESPN_LIMIT: "300",
+    });
+
+    expect(config).toMatchObject({
+      mode: "espn",
+      includeNonLive: true,
+      espnDates: "20260401-20260429",
+      espnLimit: 300,
+    });
   });
 
   it("creates the default mock provider", async () => {

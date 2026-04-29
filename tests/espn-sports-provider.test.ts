@@ -115,4 +115,23 @@ describe("EspnSportsProvider", () => {
 
     expect(events).toEqual([expect.objectContaining({ status: "ended", clock: "Final" })]);
   });
+
+  it("requests a configured ESPN dates window so completed schedules can be included", async () => {
+    const requestedUrls: string[] = [];
+    const provider = new EspnSportsProvider({
+      sport: "baseball",
+      league: "mlb",
+      includeNonLive: true,
+      scoreboardDates: "20260401-20260429",
+      limit: 300,
+      fetchJson: async (url) => {
+        requestedUrls.push(url);
+        return { events: [] };
+      },
+    });
+
+    await provider.listLiveEvents({ sport: "baseball" });
+
+    expect(requestedUrls).toEqual(["https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard?dates=20260401-20260429&limit=300"]);
+  });
 });

@@ -24,13 +24,23 @@ export const DEFAULT_ESPN_SOURCES: EspnSourceConfig[] = [
   { sport: "soccer", league: "ger.1" },
   { sport: "soccer", league: "fra.1" },
   { sport: "soccer", league: "uefa.champions" },
+  { sport: "soccer", league: "uefa.europa" },
+  { sport: "soccer", league: "uefa.europa.conf" },
+  { sport: "soccer", league: "eng.2" },
+  { sport: "soccer", league: "ned.1" },
+  { sport: "soccer", league: "por.1" },
   { sport: "soccer", league: "usa.1" },
   { sport: "soccer", league: "mex.1" },
   { sport: "racing", league: "f1" },
   { sport: "tennis", league: "atp" },
   { sport: "tennis", league: "wta" },
   { sport: "golf", league: "pga" },
+  { sport: "golf", league: "lpga" },
   { sport: "mma", league: "ufc" },
+  { sport: "volleyball", league: "mens-college-volleyball" },
+  { sport: "volleyball", league: "womens-college-volleyball" },
+  { sport: "lacrosse", league: "mens-college-lacrosse" },
+  { sport: "lacrosse", league: "womens-college-lacrosse" },
 ];
 
 export type ProviderConfig = {
@@ -41,6 +51,8 @@ export type ProviderConfig = {
   league?: string;
   includeNonLive?: boolean;
   espnSources?: EspnSourceConfig[];
+  espnDates?: string;
+  espnLimit?: number;
 };
 
 export async function createProviderFromConfig(config: ProviderConfig = {}): Promise<HappeningProvider> {
@@ -69,6 +81,8 @@ export async function createProviderFromConfig(config: ProviderConfig = {}): Pro
           sport: source.sport,
           league: source.league,
           includeNonLive: config.includeNonLive ?? false,
+          scoreboardDates: config.espnDates,
+          limit: config.espnLimit,
         }),
     );
     return providers.length === 1 ? providers[0] : new CompositeProvider(providers);
@@ -86,6 +100,8 @@ export function providerConfigFromEnv(env: NodeJS.ProcessEnv = process.env): Pro
     league: env.HAPPENING_LEAGUE,
     includeNonLive: env.HAPPENING_INCLUDE_NON_LIVE === "true",
     espnSources: parseEspnSources(env.HAPPENING_ESPN_SOURCES),
+    espnDates: env.HAPPENING_ESPN_DATES,
+    espnLimit: parsePositiveInteger(env.HAPPENING_ESPN_LIMIT),
   };
 }
 
@@ -103,4 +119,13 @@ function parseEspnSources(value: string | undefined): EspnSourceConfig[] | undef
       return { sport, league };
     });
   return sources.length > 0 ? sources : undefined;
+}
+
+function parsePositiveInteger(value: string | undefined): number | undefined {
+  if (!value) return undefined;
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed) || parsed <= 0) {
+    throw new Error(`Invalid positive integer: ${value}`);
+  }
+  return parsed;
 }

@@ -6,6 +6,8 @@ export type EspnSportsProviderOptions = {
   sport: string;
   league: string;
   includeNonLive?: boolean;
+  scoreboardDates?: string;
+  limit?: number;
   fetchJson?: EspnFetchJson;
   now?: () => Date;
 };
@@ -45,6 +47,8 @@ export class EspnSportsProvider implements HappeningProvider {
   private readonly fetchJson: EspnFetchJson;
   private readonly now: () => Date;
   private readonly includeNonLive: boolean;
+  private readonly scoreboardDates: string | undefined;
+  private readonly limit: number | undefined;
 
   constructor(options: EspnSportsProviderOptions) {
     this.sport = options.sport;
@@ -52,6 +56,8 @@ export class EspnSportsProvider implements HappeningProvider {
     this.fetchJson = options.fetchJson ?? defaultFetchJson;
     this.now = options.now ?? (() => new Date());
     this.includeNonLive = options.includeNonLive ?? false;
+    this.scoreboardDates = options.scoreboardDates;
+    this.limit = options.limit;
   }
 
   async listLiveEvents(query: LiveEventQuery = {}): Promise<Event[]> {
@@ -89,8 +95,10 @@ export class EspnSportsProvider implements HappeningProvider {
   }
 
   private async loadScoreboard(): Promise<EspnScoreboard> {
-    const url = `https://site.api.espn.com/apis/site/v2/sports/${encodeURIComponent(this.sport)}/${encodeURIComponent(this.league)}/scoreboard`;
-    return this.fetchJson(url) as Promise<EspnScoreboard>;
+    const url = new URL(`https://site.api.espn.com/apis/site/v2/sports/${encodeURIComponent(this.sport)}/${encodeURIComponent(this.league)}/scoreboard`);
+    if (this.scoreboardDates) url.searchParams.set("dates", this.scoreboardDates);
+    if (this.limit) url.searchParams.set("limit", String(this.limit));
+    return this.fetchJson(url.toString()) as Promise<EspnScoreboard>;
   }
 
   private toHappeningEvent(event: EspnEvent): Event | undefined {

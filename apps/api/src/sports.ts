@@ -13,4 +13,6 @@ export const SPORT_OPTIONS: SportOption[] = [
   { value: "tennis", label: "网球" },
   { value: "golf", label: "高尔夫" },
   { value: "mma", label: "格斗/UFC" },
+  { value: "volleyball", label: "排球" },
+  { value: "lacrosse", label: "长曲棍球" },
 ];
