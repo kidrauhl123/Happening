@@ -59,6 +59,14 @@ describe("createProviderFromConfig", () => {
     expect(DEFAULT_ESPN_SOURCES).toContainEqual({ sport: "soccer", league: "uefa.europa" });
   });
 
+  it("adds real non-sports providers to world mode", async () => {
+    const provider = await createProviderFromConfig({ mode: "world" });
+
+    expect(provider.constructor.name).toBe("CompositeProvider");
+    expect((provider as { providers?: unknown[] }).providers?.map((child) => child?.constructor?.name)).toContain("HackerNewsProvider");
+    expect((provider as { providers?: unknown[] }).providers?.map((child) => child?.constructor?.name)).toContain("UsgsEarthquakeProvider");
+  });
+
   it("parses an ESPN dates window from env for completed schedules", () => {
     const config = providerConfigFromEnv({
       HAPPENING_PROVIDER_MODE: "espn",

@@ -56,6 +56,7 @@ Happening is the facts layer for "what is happening right now". The first vertic
 - ESPN historical/completed schedule windows — implemented with `HAPPENING_ESPN_DATES` and `HAPPENING_ESPN_LIMIT`
 - World activity dashboard sections — implemented with `/api/happenings` grouped into live/recent/upcoming
 - USGS earthquake provider — implemented as the first non-sports provider to keep the world radar populated
+- Hacker News tech provider — implemented through Algolia public API as the second non-sports provider for live-ish technology discussion signals
 - JS SDK
 - Small admin/debug UI
 - Deployment packaging

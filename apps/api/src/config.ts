@@ -1,5 +1,5 @@
 import type { HappeningProvider } from "../../../packages/core/src/index.js";
-import { CompositeProvider, EspnSportsProvider, FixtureSportsProvider, MockSportsProvider, UsgsEarthquakeProvider } from "../../../packages/providers/src/index.js";
+import { CompositeProvider, EspnSportsProvider, FixtureSportsProvider, HackerNewsProvider, MockSportsProvider, UsgsEarthquakeProvider } from "../../../packages/providers/src/index.js";
 import { SQLiteEventStore } from "../../../packages/storage/src/index.js";
 
 export type ProviderMode = "mock" | "fixture" | "espn" | "world";
@@ -86,7 +86,7 @@ export async function createProviderFromConfig(config: ProviderConfig = {}): Pro
         }),
     );
     if (mode === "world") {
-      providers.push(new UsgsEarthquakeProvider());
+      providers.push(new UsgsEarthquakeProvider(), new HackerNewsProvider());
     }
     return providers.length === 1 ? providers[0] : new CompositeProvider(providers);
   }

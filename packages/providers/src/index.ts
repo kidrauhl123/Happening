@@ -3,6 +3,8 @@ export { EspnSportsProvider } from "./espn-sports-provider.js";
 export type { EspnSportsProviderOptions } from "./espn-sports-provider.js";
 export { FixtureSportsProvider } from "./fixture-sports-provider.js";
 export type { FixtureSportsProviderOptions } from "./fixture-sports-provider.js";
+export { HackerNewsProvider } from "./hacker-news-provider.js";
+export type { HackerNewsProviderOptions } from "./hacker-news-provider.js";
 export { ManualSportsProvider } from "./manual-sports-provider.js";
 export type { ManualSportsProviderOptions, SportsSnapshot } from "./manual-sports-provider.js";
 export { MockSportsProvider } from "./mock-sports-provider.js";

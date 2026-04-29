@@ -183,9 +183,9 @@ GET http://localhost:3000/api/events/nba-lal-gsw-live/timeline
 GET http://localhost:3000/api/stream/events?sport=basketball
 ```
 
-根路径 `/` 是内置前端 dashboard，现在按“正在发生 / 刚刚发生 / 即将发生”三栏展示世界动态；除了体育比分/阶段/timeline/source metadata，也可以展示地震等非体育事件。
+根路径 `/` 是内置前端 dashboard，现在按“正在发生 / 刚刚发生 / 即将发生”三栏展示世界动态；除了体育比分/阶段/timeline/source metadata，也可以展示地震、科技讨论等非体育事件。
 
-世界动态模式会同时聚合 ESPN 体育 scoreboard 和 USGS 地震 feed：
+世界动态模式会同时聚合 ESPN 体育 scoreboard、USGS 地震 feed 和 Hacker News 科技热帖：
 
 ```bash
 HAPPENING_PROVIDER_MODE=world \
@@ -197,6 +197,12 @@ npm run dev
 
 ```text
 https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+```
+
+Hacker News 科技 provider 使用 Algolia 公开 API，把最新科技讨论映射成 `category=tech` 的 recent happenings，也不需要 API key：
+
+```text
+https://hn.algolia.com/api/v1/search_by_date?tags=story
 ```
 
 ESPN 默认真实 scoreboard 模式（不需要 API key）会聚合一组常见项目：NBA/WNBA/NCAA 篮球、NFL/NCAA 橄榄球、MLB、NHL、多国足球和欧战、F1、网球、高尔夫/LPGA、UFC、排球、长曲棍球：
