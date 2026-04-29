@@ -205,7 +205,7 @@ Hacker News 科技 provider 使用 Algolia 公开 API，把最新科技讨论映
 https://hn.algolia.com/api/v1/search_by_date?tags=story
 ```
 
-ESPN 默认真实 scoreboard 模式（不需要 API key）会聚合一组常见项目：NBA/WNBA/NCAA 篮球、NFL/NCAA 橄榄球、MLB、NHL、多国足球和欧战、F1、网球、高尔夫/LPGA、UFC、排球、长曲棍球：
+ESPN 默认真实 scoreboard 模式（不需要 API key）会聚合一组常见项目：NBA/WNBA/NCAA/FIBA/NBL 篮球、NFL/NCAA 橄榄球、MLB、NHL、欧洲/美洲/亚洲/大洋洲多国足球联赛和洲际杯赛、世界杯/世预赛、F1、网球、高尔夫/LPGA、UFC、排球、长曲棍球：
 
 ```bash
 HAPPENING_PROVIDER_MODE=espn \

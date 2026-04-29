@@ -59,6 +59,24 @@ describe("createProviderFromConfig", () => {
     expect(DEFAULT_ESPN_SOURCES).toContainEqual({ sport: "soccer", league: "uefa.europa" });
   });
 
+  it("covers major non-US soccer regions and international tournaments by default", () => {
+    expect(DEFAULT_ESPN_SOURCES).toEqual(
+      expect.arrayContaining([
+        { sport: "soccer", league: "bra.1" },
+        { sport: "soccer", league: "arg.1" },
+        { sport: "soccer", league: "jpn.1" },
+        { sport: "soccer", league: "chn.1" },
+        { sport: "soccer", league: "aus.1" },
+        { sport: "soccer", league: "ind.1" },
+        { sport: "soccer", league: "tha.1" },
+        { sport: "soccer", league: "idn.1" },
+        { sport: "soccer", league: "conmebol.libertadores" },
+        { sport: "soccer", league: "afc.champions" },
+        { sport: "soccer", league: "caf.champions" },
+      ]),
+    );
+  });
+
   it("adds real non-sports providers to world mode", async () => {
     const provider = await createProviderFromConfig({ mode: "world" });
 
