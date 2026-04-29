@@ -183,16 +183,14 @@ GET http://localhost:3000/api/stream/events?sport=basketball
 
 根路径 `/` 是最简陋的内置前端 dashboard，可以看到当前掌握的 live events、比分/阶段、timeline 和 source metadata。
 
-ESPN 真实 scoreboard 模式（不需要 API key）：
+ESPN 默认真实 scoreboard 模式（不需要 API key）会聚合一组常见项目：NBA/WNBA/NCAA 篮球、NFL/NCAA 橄榄球、MLB、NHL、多国足球、F1、网球、高尔夫和 UFC：
 
 ```bash
 HAPPENING_PROVIDER_MODE=espn \
-HAPPENING_SPORT=basketball \
-HAPPENING_LEAGUE=nba \
 npm run dev
 ```
 
-多项目聚合模式可以用 `HAPPENING_ESPN_SOURCES` 配多个 `sport:league`：
+也可以用 `HAPPENING_ESPN_SOURCES` 手动覆盖多个 `sport:league`：
 
 ```bash
 HAPPENING_PROVIDER_MODE=espn \
@@ -209,7 +207,7 @@ HAPPENING_INCLUDE_NON_LIVE=true \
 npm run dev
 ```
 
-dashboard 的“项目过滤”默认留空，表示显示全部项目；填 `basketball` 或 `soccer` 可以只看某一个项目。
+dashboard 的“项目过滤”是下拉框，会从 `/api/sports` 读取当前支持的项目；默认“全部项目”，也可以选择篮球、足球、棒球、冰球、橄榄球、赛车/F1、网球、高尔夫或格斗/UFC。
 
 然后打开：
 
@@ -290,8 +288,9 @@ docs/plans/2026-04-29-happening-development-roadmap.md
 - `ManualSportsProvider` 支持把手工/真实来源快照同步进 store，并从 store 提供读取
 - `FixtureSportsProvider` 支持从 JSON fixture 加载标准化快照并同步进 store
 - `EspnSportsProvider` 支持读取 ESPN 公开 scoreboard API，并映射成 Happening 标准 Event / TimelineAtom / SourceMetadata
-- `CompositeProvider` 支持把多个 provider 聚合成一个统一事实源，用于同时拉 NBA、英超、西甲等多个 scoreboard
+- `CompositeProvider` 支持把多个 provider 聚合成一个统一事实源，用于同时拉 NBA、WNBA、NCAA、NFL、MLB、NHL、足球、F1、网球、高尔夫、UFC 等多个 scoreboard
 - API server 支持默认 mock 模式、fixture + SQLite 模式、单 ESPN scoreboard 模式和 ESPN 多项目聚合模式
+- `/api/sports` 输出 dashboard 项目下拉框选项
 - API 健康检查
 - 实况事件列表和 sport 过滤
 - 单场事件详情

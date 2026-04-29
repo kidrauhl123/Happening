@@ -12,6 +12,25 @@ describe("Happening API", () => {
     await expect(response.json()).resolves.toMatchObject({ ok: true, service: "happening-api" });
   });
 
+  it("lists configured sport filter options", async () => {
+    const response = await app.request("/api/sports");
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      sports: [
+        { value: "basketball", label: "篮球" },
+        { value: "football", label: "橄榄球" },
+        { value: "baseball", label: "棒球" },
+        { value: "hockey", label: "冰球" },
+        { value: "soccer", label: "足球" },
+        { value: "racing", label: "赛车/F1" },
+        { value: "tennis", label: "网球" },
+        { value: "golf", label: "高尔夫" },
+        { value: "mma", label: "格斗/UFC" },
+      ],
+    });
+  });
+
   it("lists live events and supports sport filtering", async () => {
     const response = await app.request("/api/events/live?sport=basketball");
 

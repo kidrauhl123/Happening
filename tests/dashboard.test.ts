@@ -15,7 +15,9 @@ describe("Happening dashboard", () => {
     expect(html).toContain("/api/events/live");
     expect(html).toContain("时间线");
     expect(html).toContain("来源");
-    expect(html).toContain("留空=全部");
+    expect(html).toContain("项目过滤");
+    expect(html).toContain("<select id=\"sport\"");
+    expect(html).toContain("全部项目");
   });
 
   it("serves dashboard JavaScript that parses in browsers", async () => {

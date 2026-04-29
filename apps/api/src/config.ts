@@ -9,6 +9,30 @@ export type EspnSourceConfig = {
   league: string;
 };
 
+export const DEFAULT_ESPN_SOURCES: EspnSourceConfig[] = [
+  { sport: "basketball", league: "nba" },
+  { sport: "basketball", league: "wnba" },
+  { sport: "basketball", league: "mens-college-basketball" },
+  { sport: "basketball", league: "womens-college-basketball" },
+  { sport: "football", league: "nfl" },
+  { sport: "football", league: "college-football" },
+  { sport: "baseball", league: "mlb" },
+  { sport: "hockey", league: "nhl" },
+  { sport: "soccer", league: "eng.1" },
+  { sport: "soccer", league: "esp.1" },
+  { sport: "soccer", league: "ita.1" },
+  { sport: "soccer", league: "ger.1" },
+  { sport: "soccer", league: "fra.1" },
+  { sport: "soccer", league: "uefa.champions" },
+  { sport: "soccer", league: "usa.1" },
+  { sport: "soccer", league: "mex.1" },
+  { sport: "racing", league: "f1" },
+  { sport: "tennis", league: "atp" },
+  { sport: "tennis", league: "wta" },
+  { sport: "golf", league: "pga" },
+  { sport: "mma", league: "ufc" },
+];
+
 export type ProviderConfig = {
   mode?: ProviderMode;
   databasePath?: string;
@@ -38,7 +62,7 @@ export async function createProviderFromConfig(config: ProviderConfig = {}): Pro
   }
 
   if (mode === "espn") {
-    const sources = config.espnSources ?? [{ sport: config.sport ?? "basketball", league: config.league ?? "nba" }];
+    const sources = config.espnSources ?? (config.sport || config.league ? [{ sport: config.sport ?? "basketball", league: config.league ?? "nba" }] : DEFAULT_ESPN_SOURCES);
     const providers = sources.map(
       (source) =>
         new EspnSportsProvider({

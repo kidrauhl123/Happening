@@ -13,7 +13,7 @@ export function renderDashboardHtml(): string {
       p { color: #94a3b8; }
       .toolbar, .card { border: 1px solid #1f2a44; background: linear-gradient(180deg, #101827, #0b1220); border-radius: 18px; box-shadow: 0 20px 60px #0006; }
       .toolbar { display: flex; gap: 12px; align-items: center; padding: 14px; margin: 24px 0; }
-      input, button { border-radius: 12px; border: 1px solid #2d3a58; background: #0b1220; color: #e5edf7; padding: 10px 12px; }
+      input, select, button { border-radius: 12px; border: 1px solid #2d3a58; background: #0b1220; color: #e5edf7; padding: 10px 12px; }
       button { cursor: pointer; background: #2563eb; border-color: #3b82f6; font-weight: 700; }
       #events { display: grid; gap: 14px; }
       .card { padding: 18px; }
@@ -32,7 +32,7 @@ export function renderDashboardHtml(): string {
       <h1>Happening 实况面板</h1>
       <p>这里展示 Happening 当前从各个数据源掌握的比赛、比分、阶段、时间线和来源。</p>
       <section class="toolbar">
-        <label>项目过滤 <input id="sport" value="" placeholder="留空=全部；basketball / soccer / football / f1" /></label>
+        <label>项目过滤 <select id="sport"><option value="">全部项目</option></select></label>
         <button id="refresh">刷新</button>
         <span class="pill">接口：/api/events/live</span>
       </section>
@@ -66,6 +66,19 @@ export function renderDashboardHtml(): string {
         ).join('') || '<p>暂无时间线。</p>';
       }
 
+      async function loadSportOptions() {
+        try {
+          const response = await fetch('/api/sports');
+          const body = await response.json();
+          const options = body.sports || [];
+          sportEl.innerHTML = '<option value="">全部项目</option>' + options.map(option =>
+            '<option value="' + escapeHtml(option.value) + '">' + escapeHtml(option.label) + '（' + escapeHtml(option.value) + '）</option>'
+          ).join('');
+        } catch (error) {
+          console.warn('Failed to load sport options', error);
+        }
+      }
+
       async function refresh() {
         eventsEl.innerHTML = '<p>加载中…</p>';
         const sport = sportEl.value.trim();
@@ -84,7 +97,8 @@ export function renderDashboardHtml(): string {
       }
 
       refreshEl.addEventListener('click', refresh);
-      refresh();
+      sportEl.addEventListener('change', refresh);
+      loadSportOptions().then(refresh);
       window.loadTimeline = loadTimeline;
     </script>
   </body>
