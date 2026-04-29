@@ -31,6 +31,12 @@ const event: Event = {
 };
 
 describe("createProviderFromConfig", () => {
+  it("creates an ESPN provider for public scoreboard data", async () => {
+    const provider = await createProviderFromConfig({ mode: "espn", sport: "basketball", league: "nba" });
+
+    expect(provider.constructor.name).toBe("EspnSportsProvider");
+  });
+
   it("creates the default mock provider", async () => {
     const provider = await createProviderFromConfig({ mode: "mock" });
 

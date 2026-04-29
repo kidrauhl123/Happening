@@ -1,3 +1,5 @@
+export { EspnSportsProvider } from "./espn-sports-provider.js";
+export type { EspnSportsProviderOptions } from "./espn-sports-provider.js";
 export { FixtureSportsProvider } from "./fixture-sports-provider.js";
 export type { FixtureSportsProviderOptions } from "./fixture-sports-provider.js";
 export { ManualSportsProvider } from "./manual-sports-provider.js";

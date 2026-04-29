@@ -16,4 +16,15 @@ describe("Happening dashboard", () => {
     expect(html).toContain("timeline");
     expect(html).toContain("source");
   });
+
+  it("serves dashboard JavaScript that parses in browsers", async () => {
+    const app = createApp({ provider: new MockSportsProvider() });
+
+    const response = await app.request("/");
+    const html = await response.text();
+    const script = html.match(/<script>([\s\S]*)<\/script>/)?.[1];
+
+    expect(script).toBeDefined();
+    expect(() => new Function(script as string)).not.toThrow();
+  });
 });

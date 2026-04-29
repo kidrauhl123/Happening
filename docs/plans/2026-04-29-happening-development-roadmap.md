@@ -47,9 +47,9 @@ Happening is the facts layer for "what is happening right now". The first vertic
 - Minimal frontend/dashboard — implemented at API root `/` so the user can see known live events, timelines, raw JSON, and sources
 - Webhook registration/delivery — next
 
-### Milestone 4 — Later
+### Milestone 4 — Current
 
-- Real sports data provider adapter
+- Real sports data provider adapter — first pass implemented with `EspnSportsProvider` using ESPN public scoreboard API
 - JS SDK
 - Small admin/debug UI
 - Deployment packaging

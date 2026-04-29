@@ -183,6 +183,31 @@ GET http://localhost:3000/api/stream/events?sport=basketball
 
 根路径 `/` 是最简陋的内置前端 dashboard，可以看到当前掌握的 live events、比分/阶段、timeline 和 source metadata。
 
+ESPN 真实 scoreboard 模式（不需要 API key）：
+
+```bash
+HAPPENING_PROVIDER_MODE=espn \
+HAPPENING_SPORT=basketball \
+HAPPENING_LEAGUE=nba \
+npm run dev
+```
+
+如果当前没有正在直播的比赛，可以打开调试开关，把 ESPN scoreboard 中已结束/未开始的比赛也展示出来，方便验证真实数据源链路：
+
+```bash
+HAPPENING_PROVIDER_MODE=espn \
+HAPPENING_SPORT=basketball \
+HAPPENING_LEAGUE=nba \
+HAPPENING_INCLUDE_NON_LIVE=true \
+npm run dev
+```
+
+然后打开：
+
+```text
+http://localhost:3000/
+```
+
 持久化 / fixture 模式：
 
 先用 worker 同步 fixture 到 SQLite：
@@ -255,7 +280,8 @@ docs/plans/2026-04-29-happening-development-roadmap.md
 - 内置 `/` dashboard 支持查看 live events、timeline、raw JSON 和 source metadata
 - `ManualSportsProvider` 支持把手工/真实来源快照同步进 store，并从 store 提供读取
 - `FixtureSportsProvider` 支持从 JSON fixture 加载标准化快照并同步进 store
-- API server 支持默认 mock 模式和 fixture + SQLite 模式
+- `EspnSportsProvider` 支持读取 ESPN 公开 scoreboard API，并映射成 Happening 标准 Event / TimelineAtom / SourceMetadata
+- API server 支持默认 mock 模式、fixture + SQLite 模式和 ESPN scoreboard 模式
 - API 健康检查
 - 实况事件列表和 sport 过滤
 - 单场事件详情
