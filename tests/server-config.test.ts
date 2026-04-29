@@ -37,6 +37,18 @@ describe("createProviderFromConfig", () => {
     expect(provider.constructor.name).toBe("EspnSportsProvider");
   });
 
+  it("creates a composite ESPN provider from multiple source specs", async () => {
+    const provider = await createProviderFromConfig({
+      mode: "espn",
+      espnSources: [
+        { sport: "basketball", league: "nba" },
+        { sport: "soccer", league: "eng.1" },
+      ],
+    });
+
+    expect(provider.constructor.name).toBe("CompositeProvider");
+  });
+
   it("creates the default mock provider", async () => {
     const provider = await createProviderFromConfig({ mode: "mock" });
 

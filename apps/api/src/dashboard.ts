@@ -1,6 +1,6 @@
 export function renderDashboardHtml(): string {
   return `<!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,14 +29,14 @@ export function renderDashboardHtml(): string {
   </head>
   <body>
     <main>
-      <h1>Happening Dashboard</h1>
-      <p>Minimal frontend for seeing the live events, timelines, and source metadata currently known by Happening.</p>
+      <h1>Happening 实况面板</h1>
+      <p>这里展示 Happening 当前从各个数据源掌握的比赛、比分、阶段、时间线和来源。</p>
       <section class="toolbar">
-        <label>Sport <input id="sport" value="basketball" placeholder="basketball / football / f1" /></label>
-        <button id="refresh">Refresh</button>
-        <span class="pill">API: /api/events/live</span>
+        <label>项目过滤 <input id="sport" value="" placeholder="留空=全部；basketball / soccer / football / f1" /></label>
+        <button id="refresh">刷新</button>
+        <span class="pill">接口：/api/events/live</span>
       </section>
-      <section id="events"><p>Loading…</p></section>
+      <section id="events"><p>加载中…</p></section>
     </main>
     <script>
       const eventsEl = document.querySelector('#events');
@@ -48,11 +48,11 @@ export function renderDashboardHtml(): string {
       }
 
       function renderSource(source) {
-        if (!source) return '<span class="pill source">source: unknown</span>';
-        const bits = [source.providerId, source.externalId, source.url, source.confidence != null ? 'confidence ' + source.confidence : null, source.lastSeenAt]
+        if (!source) return '<span class="pill source">来源：未知</span>';
+        const bits = [source.providerId, source.externalId, source.url, source.confidence != null ? '置信度 ' + source.confidence : null, source.lastSeenAt]
           .filter(Boolean)
           .map(escapeHtml);
-        return '<span class="pill source">source: ' + bits.join(' · ') + '</span>';
+        return '<span class="pill source">来源：' + bits.join(' · ') + '</span>';
       }
 
       async function loadTimeline(eventId) {
@@ -63,11 +63,11 @@ export function renderDashboardHtml(): string {
         target.dataset.loaded = 'true';
         target.innerHTML = (body.timeline || []).map(atom =>
           '<div class="atom"><strong>' + escapeHtml(atom.time) + '</strong> [' + escapeHtml(atom.type) + '] ' + escapeHtml(atom.text) + '<div class="meta">' + renderSource(atom.source) + '</div></div>'
-        ).join('') || '<p>No timeline atoms yet.</p>';
+        ).join('') || '<p>暂无时间线。</p>';
       }
 
       async function refresh() {
-        eventsEl.innerHTML = '<p>Loading…</p>';
+        eventsEl.innerHTML = '<p>加载中…</p>';
         const sport = sportEl.value.trim();
         const url = '/api/events/live' + (sport ? '?sport=' + encodeURIComponent(sport) : '');
         try {
@@ -75,11 +75,11 @@ export function renderDashboardHtml(): string {
           const body = await response.json();
           const events = body.events || [];
           eventsEl.innerHTML = events.map(event => {
-            const score = event.score ? Object.entries(event.score).map(([k, v]) => escapeHtml(k) + ': ' + escapeHtml(v)).join(' · ') : 'No score yet';
-            return '<article class="card"><h2>' + escapeHtml(event.title) + '</h2><div class="score">' + score + '</div><div class="meta"><span class="pill">' + escapeHtml(event.status) + '</span><span class="pill">' + escapeHtml(event.sport || 'unknown sport') + '</span><span class="pill">' + escapeHtml(event.league || 'unknown league') + '</span><span class="pill">' + escapeHtml(event.clock || 'no clock') + '</span>' + renderSource(event.source) + '</div><details onclick="loadTimeline(&quot;' + escapeHtml(event.id) + '&quot;)"><summary>timeline</summary><div class="timeline" data-timeline="' + escapeHtml(event.id) + '">Loading timeline…</div></details><details><summary>raw event</summary><pre>' + escapeHtml(JSON.stringify(event, null, 2)) + '</pre></details></article>';
-          }).join('') || '<p>No live events match this filter.</p>';
+            const score = event.score ? Object.entries(event.score).map(([k, v]) => escapeHtml(k) + ': ' + escapeHtml(v)).join(' · ') : '暂无比分';
+            return '<article class="card"><h2>' + escapeHtml(event.title) + '</h2><div class="score">' + score + '</div><div class="meta"><span class="pill">状态：' + escapeHtml(event.status) + '</span><span class="pill">项目：' + escapeHtml(event.sport || '未知') + '</span><span class="pill">联赛：' + escapeHtml(event.league || '未知') + '</span><span class="pill">阶段：' + escapeHtml(event.clock || '暂无') + '</span>' + renderSource(event.source) + '</div><details onclick="loadTimeline(&quot;' + escapeHtml(event.id) + '&quot;)"><summary>时间线</summary><div class="timeline" data-timeline="' + escapeHtml(event.id) + '">加载时间线…</div></details><details><summary>原始 JSON</summary><pre>' + escapeHtml(JSON.stringify(event, null, 2)) + '</pre></details></article>';
+          }).join('') || '<p>没有匹配这个过滤条件的赛事。你可以清空项目过滤，查看全部。</p>';
         } catch (error) {
-          eventsEl.innerHTML = '<p class="error">Failed to load events: ' + escapeHtml(error.message || error) + '</p>';
+          eventsEl.innerHTML = '<p class="error">加载失败：' + escapeHtml(error.message || error) + '</p>';
         }
       }
 

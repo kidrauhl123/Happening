@@ -50,6 +50,7 @@ Happening is the facts layer for "what is happening right now". The first vertic
 ### Milestone 4 — Current
 
 - Real sports data provider adapter — first pass implemented with `EspnSportsProvider` using ESPN public scoreboard API
+- Multi-source provider aggregation — implemented with `CompositeProvider` and `HAPPENING_ESPN_SOURCES` for multiple ESPN scoreboards
 - JS SDK
 - Small admin/debug UI
 - Deployment packaging

@@ -1,8 +1,13 @@
 import type { HappeningProvider } from "../../../packages/core/src/index.js";
-import { EspnSportsProvider, FixtureSportsProvider, MockSportsProvider } from "../../../packages/providers/src/index.js";
+import { CompositeProvider, EspnSportsProvider, FixtureSportsProvider, MockSportsProvider } from "../../../packages/providers/src/index.js";
 import { SQLiteEventStore } from "../../../packages/storage/src/index.js";
 
 export type ProviderMode = "mock" | "fixture" | "espn";
+
+export type EspnSourceConfig = {
+  sport: string;
+  league: string;
+};
 
 export type ProviderConfig = {
   mode?: ProviderMode;
@@ -11,6 +16,7 @@ export type ProviderConfig = {
   sport?: string;
   league?: string;
   includeNonLive?: boolean;
+  espnSources?: EspnSourceConfig[];
 };
 
 export async function createProviderFromConfig(config: ProviderConfig = {}): Promise<HappeningProvider> {
@@ -32,11 +38,16 @@ export async function createProviderFromConfig(config: ProviderConfig = {}): Pro
   }
 
   if (mode === "espn") {
-    return new EspnSportsProvider({
-      sport: config.sport ?? "basketball",
-      league: config.league ?? "nba",
-      includeNonLive: config.includeNonLive ?? false,
-    });
+    const sources = config.espnSources ?? [{ sport: config.sport ?? "basketball", league: config.league ?? "nba" }];
+    const providers = sources.map(
+      (source) =>
+        new EspnSportsProvider({
+          sport: source.sport,
+          league: source.league,
+          includeNonLive: config.includeNonLive ?? false,
+        }),
+    );
+    return providers.length === 1 ? providers[0] : new CompositeProvider(providers);
   }
 
   throw new Error(`Unsupported provider mode: ${mode satisfies never}`);
@@ -50,5 +61,22 @@ export function providerConfigFromEnv(env: NodeJS.ProcessEnv = process.env): Pro
     sport: env.HAPPENING_SPORT,
     league: env.HAPPENING_LEAGUE,
     includeNonLive: env.HAPPENING_INCLUDE_NON_LIVE === "true",
+    espnSources: parseEspnSources(env.HAPPENING_ESPN_SOURCES),
   };
+}
+
+function parseEspnSources(value: string | undefined): EspnSourceConfig[] | undefined {
+  if (!value) return undefined;
+  const sources = value
+    .split(",")
+    .map((source) => source.trim())
+    .filter(Boolean)
+    .map((source) => {
+      const [sport, league] = source.split(":");
+      if (!sport || !league) {
+        throw new Error(`Invalid HAPPENING_ESPN_SOURCES entry: ${source}`);
+      }
+      return { sport, league };
+    });
+  return sources.length > 0 ? sources : undefined;
 }

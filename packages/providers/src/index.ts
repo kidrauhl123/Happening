@@ -1,3 +1,4 @@
+export { CompositeProvider } from "./composite-provider.js";
 export { EspnSportsProvider } from "./espn-sports-provider.js";
 export type { EspnSportsProviderOptions } from "./espn-sports-provider.js";
 export { FixtureSportsProvider } from "./fixture-sports-provider.js";

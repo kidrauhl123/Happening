@@ -11,10 +11,11 @@ describe("Happening dashboard", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toContain("text/html");
-    expect(html).toContain("Happening Dashboard");
+    expect(html).toContain("Happening 实况面板");
     expect(html).toContain("/api/events/live");
-    expect(html).toContain("timeline");
-    expect(html).toContain("source");
+    expect(html).toContain("时间线");
+    expect(html).toContain("来源");
+    expect(html).toContain("留空=全部");
   });
 
   it("serves dashboard JavaScript that parses in browsers", async () => {
