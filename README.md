@@ -161,7 +161,7 @@ Happening/
 6. 通过 SSE 推送实时更新
 7. 为后续真实数据源适配留下 Provider 接口
 
-当前仓库已经完成这个 mock MVP 的第一版：
+当前仓库已经完成这个 mock MVP 的第一版，并新增了 storage 层与真实数据源适配器骨架：
 
 ```bash
 npm install
@@ -183,12 +183,21 @@ GET http://localhost:3000/api/stream/events?sport=basketball
 测试覆盖：
 
 - `MockSportsProvider` 返回标准化体育事件和时间线
+- `InMemoryEventStore` 支持事件 upsert、实况过滤、详情读取和时间线替换
+- `ManualSportsProvider` 支持把手工/真实来源快照同步进 store，并从 store 提供读取
 - API 健康检查
 - 实况事件列表和 sport 过滤
 - 单场事件详情
 - 单场时间线
 - 未知事件 404
 - SSE snapshot 输出
+
+当前模块边界：
+
+- `packages/core`：事实模型、Provider 接口、Store 接口、同步结果类型
+- `packages/storage`：先提供 `InMemoryEventStore`，接口按未来 SQLite 实现设计
+- `packages/providers`：`MockSportsProvider` 用于 API demo；`ManualSportsProvider` 作为真实数据源适配器骨架，可把外部抓取结果标准化后写入 store
+- `apps/api`：只依赖 `HappeningProvider`，因此可以无缝切换 mock provider、manual provider 或后续真实 provider
 
 ---
 
