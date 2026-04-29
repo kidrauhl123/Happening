@@ -161,6 +161,35 @@ Happening/
 6. 通过 SSE 推送实时更新
 7. 为后续真实数据源适配留下 Provider 接口
 
+当前仓库已经完成这个 mock MVP 的第一版：
+
+```bash
+npm install
+npm test
+npm run typecheck
+npm run dev
+```
+
+可验证接口：
+
+```http
+GET http://localhost:3000/health
+GET http://localhost:3000/api/events/live?sport=basketball
+GET http://localhost:3000/api/events/nba-lal-gsw-live
+GET http://localhost:3000/api/events/nba-lal-gsw-live/timeline
+GET http://localhost:3000/api/stream/events?sport=basketball
+```
+
+测试覆盖：
+
+- `MockSportsProvider` 返回标准化体育事件和时间线
+- API 健康检查
+- 实况事件列表和 sport 过滤
+- 单场事件详情
+- 单场时间线
+- 未知事件 404
+- SSE snapshot 输出
+
 ---
 
 ## 设计原则

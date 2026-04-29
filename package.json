@@ -1,0 +1,23 @@
+{
+  "name": "happening",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Live event facts API for sports happenings.",
+  "scripts": {
+    "dev": "tsx apps/api/src/server.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "latest",
+    "hono": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "tsx": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
+  }
+}
