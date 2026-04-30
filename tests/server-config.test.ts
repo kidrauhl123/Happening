@@ -82,6 +82,7 @@ describe("createProviderFromConfig", () => {
 
     expect(provider.constructor.name).toBe("CompositeProvider");
     expect((provider as { providers?: unknown[] }).providers?.map((child) => child?.constructor?.name)).toContain("HackerNewsProvider");
+    expect((provider as { providers?: unknown[] }).providers?.map((child) => child?.constructor?.name)).toContain("SnookerOrgProvider");
     expect((provider as { providers?: unknown[] }).providers?.map((child) => child?.constructor?.name)).toContain("UsgsEarthquakeProvider");
   });
 

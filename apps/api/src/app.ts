@@ -15,6 +15,14 @@ function liveEventQueryFromUrl(url: string): LiveEventQuery {
   };
 }
 
+function filterEvents(events: Event[], query: LiveEventQuery): Event[] {
+  return events.filter((event) => {
+    if (query.category && event.category !== query.category) return false;
+    if (query.sport && event.sport !== query.sport) return false;
+    return true;
+  });
+}
+
 function groupHappenings(events: Event[]): { live: Event[]; recent: Event[]; upcoming: Event[] } {
   return {
     live: events.filter((event) => event.status === "live"),
@@ -33,12 +41,14 @@ export function createApp({ provider }: AppDependencies): Hono {
   app.get("/api/sports", (c) => c.json({ sports: SPORT_OPTIONS }));
 
   app.get("/api/events/live", async (c) => {
-    const events = await provider.listLiveEvents(liveEventQueryFromUrl(c.req.url));
+    const query = liveEventQueryFromUrl(c.req.url);
+    const events = filterEvents(await provider.listLiveEvents(query), query);
     return c.json({ events });
   });
 
   app.get("/api/happenings", async (c) => {
-    const events = await provider.listLiveEvents(liveEventQueryFromUrl(c.req.url));
+    const query = liveEventQueryFromUrl(c.req.url);
+    const events = filterEvents(await provider.listLiveEvents(query), query);
     return c.json({ events, sections: groupHappenings(events) });
   });
 
@@ -62,7 +72,7 @@ export function createApp({ provider }: AppDependencies): Hono {
 
   app.get("/api/stream/events", async (c) => {
     const query = liveEventQueryFromUrl(c.req.url);
-    const events = await provider.listLiveEvents(query);
+    const events = filterEvents(await provider.listLiveEvents(query), query);
     const payload = `event: snapshot\ndata: ${JSON.stringify({ events })}\n\n`;
     return new Response(payload, {
       headers: {

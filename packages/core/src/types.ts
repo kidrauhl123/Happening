@@ -23,6 +23,7 @@ export type Event = {
   participants?: string[];
   score?: Record<string, number | string>;
   clock?: string;
+  startsAt?: string;
   region?: string;
   magnitude?: number;
   coordinates?: { longitude: number; latitude: number; depthKm?: number };

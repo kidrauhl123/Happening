@@ -205,7 +205,7 @@ Hacker News 科技 provider 使用 Algolia 公开 API，把最新科技讨论映
 https://hn.algolia.com/api/v1/search_by_date?tags=story
 ```
 
-ESPN 默认真实 scoreboard 模式（不需要 API key）会聚合一组常见项目：NBA/WNBA/NCAA/FIBA/NBL 篮球、NFL/NCAA 橄榄球、MLB、NHL、欧洲/美洲/亚洲/大洋洲多国足球联赛和洲际杯赛、世界杯/世预赛、F1、网球、高尔夫/LPGA、UFC、排球、长曲棍球：
+ESPN 默认真实 scoreboard 模式（不需要 API key）会聚合一组常见项目：NBA/WNBA/NCAA/FIBA/NBL 篮球、NFL/NCAA 橄榄球、MLB、NHL、欧洲/美洲/亚洲/大洋洲多国足球联赛和洲际杯赛、世界杯/世预赛、F1、网球、高尔夫/LPGA、UFC、排球、长曲棍球。world 模式还会额外接入 snooker.org Live Scores，用来覆盖斯诺克世锦赛等正在进行的台球比赛：
 
 ```bash
 HAPPENING_PROVIDER_MODE=espn \
@@ -245,7 +245,7 @@ npm run dev
 - `202604`：整月
 - `20260401-20260429`：日期范围
 
-dashboard 的“项目过滤”是下拉框，会从 `/api/sports` 读取当前支持的项目；默认“全部项目”，也可以选择篮球、足球、棒球、冰球、橄榄球、赛车/F1、网球、高尔夫、格斗/UFC、排球或长曲棍球。
+dashboard 的“项目过滤”是下拉框，会从 `/api/sports` 读取当前支持的项目；默认“全部项目”，也可以选择篮球、足球、棒球、冰球、橄榄球、赛车/F1、网球、高尔夫、格斗/UFC、排球、长曲棍球或斯诺克。
 
 然后打开：
 

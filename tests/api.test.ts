@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createApp } from "../apps/api/src/app.js";
+import type { Event, HappeningProvider } from "../packages/core/src/index.js";
 import { MockSportsProvider } from "../packages/providers/src/mock-sports-provider.js";
 
 describe("Happening API", () => {
@@ -29,6 +30,7 @@ describe("Happening API", () => {
         { value: "mma", label: "格斗/UFC" },
         { value: "volleyball", label: "排球" },
         { value: "lacrosse", label: "长曲棍球" },
+        { value: "snooker", label: "斯诺克" },
       ],
     });
   });
@@ -53,6 +55,28 @@ describe("Happening API", () => {
         upcoming: expect.any(Array),
       },
     });
+  });
+
+  it("applies sport filters after aggregation so non-sport world events do not leak into sport views", async () => {
+    const mixedEvents: Event[] = [
+      { id: "earthquake-1", title: "M 2.2 - Hawaii", category: "earthquake", status: "recent", updatedAt: "2026-04-30T00:00:00.000Z" },
+      { id: "snooker-1", title: "World Championship: Shaun Murphy vs John Higgins", category: "sports", sport: "snooker", status: "scheduled", updatedAt: "2026-04-30T00:00:00.000Z" },
+      { id: "soccer-1", title: "Barcelona SC vs Universidad Católica", category: "sports", sport: "soccer", status: "live", updatedAt: "2026-04-30T00:00:00.000Z" },
+    ];
+    const mixedProvider: HappeningProvider = {
+      listLiveEvents: async () => mixedEvents,
+      getEvent: async () => undefined,
+      getTimeline: async () => [],
+    };
+    const filteredApp = createApp({ provider: mixedProvider });
+
+    const response = await filteredApp.request("/api/happenings?sport=snooker");
+
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.events).toHaveLength(1);
+    expect(body.events[0]).toMatchObject({ id: "snooker-1", sport: "snooker" });
+    expect(body.sections).toMatchObject({ live: [], recent: [], upcoming: [expect.objectContaining({ id: "snooker-1" })] });
   });
 
   it("returns event details and timeline", async () => {

@@ -8,5 +8,7 @@ export type { HackerNewsProviderOptions } from "./hacker-news-provider.js";
 export { ManualSportsProvider } from "./manual-sports-provider.js";
 export type { ManualSportsProviderOptions, SportsSnapshot } from "./manual-sports-provider.js";
 export { MockSportsProvider } from "./mock-sports-provider.js";
+export { SnookerOrgProvider } from "./snooker-org-provider.js";
+export type { SnookerOrgProviderOptions } from "./snooker-org-provider.js";
 export { UsgsEarthquakeProvider } from "./usgs-earthquake-provider.js";
 export type { UsgsEarthquakeProviderOptions } from "./usgs-earthquake-provider.js";

@@ -52,6 +52,7 @@ Happening is the facts layer for "what is happening right now". The first vertic
 - Real sports data provider adapter — first pass implemented with `EspnSportsProvider` using ESPN public scoreboard API
 - Multi-source provider aggregation — implemented with `CompositeProvider` and `HAPPENING_ESPN_SOURCES` for multiple ESPN scoreboards
 - Broad default ESPN source set — implemented across basketball (NBA/WNBA/NCAA/FIBA/NBL), football, baseball, hockey, soccer across Europe/Americas/Asia/Oceania plus international tournaments and continental cups, F1/racing, tennis, golf/LPGA, MMA/UFC, volleyball, and lacrosse
+- Snooker live-score provider — implemented with snooker.org Live Scores to cover World Championship and other ongoing snooker matches ESPN misses
 - Dashboard sport selector — implemented with `/api/sports` options instead of free-text filtering
 - ESPN historical/completed schedule windows — implemented with `HAPPENING_ESPN_DATES` and `HAPPENING_ESPN_LIMIT`
 - World activity dashboard sections — implemented with `/api/happenings` grouped into live/recent/upcoming
